@@ -1,1 +1,2 @@
-proyecto para el nasa space challenge 2026
+# ISTMOSAR — Space Dogs ARPIP Stage 0 Planning Package
+Planning documentation, not implemented competition solution. Main MVP target: two authentic NISAR L2 GCOV observations, reproducible surface-change map and interactive interpretation. Panama is first choice, pending verified scene pair. See docs/ for requirements, architecture, backlog and compliance. All documents provisional and must be reconciled with complete challenge statement and actual catalog evidence.
