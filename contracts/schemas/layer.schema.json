@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISTMOSAR Map Layer v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "role",
+    "status",
+    "source_scene_ids",
+    "url",
+    "format",
+    "crs",
+    "units",
+    "measurement",
+    "nodata_policy"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "before",
+        "after",
+        "change",
+        "change_mask",
+        "valid_mask",
+        "context"
+      ]
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "generated_unverified",
+        "qa_passed",
+        "rejected"
+      ]
+    },
+    "source_scene_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "format": {
+      "enum": [
+        "geotiff",
+        "cog",
+        "png_overlay",
+        "tile_xyz",
+        "geojson",
+        "unknown"
+      ]
+    },
+    "crs": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "units": {
+      "enum": [
+        "dB",
+        "linear_power",
+        "boolean",
+        "none",
+        "unknown"
+      ]
+    },
+    "measurement": {
+      "enum": [
+        "gamma0",
+        "sigma0",
+        "delta_gamma0_db",
+        "change_threshold_mask",
+        "validity",
+        "context",
+        "unknown"
+      ]
+    },
+    "nodata_policy": {
+      "type": "string"
+    },
+    "bounds_lonlat": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "legend": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

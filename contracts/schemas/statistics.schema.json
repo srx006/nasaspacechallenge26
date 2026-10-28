@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISTMOSAR Level 2 Statistics v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "valid_pixel_count",
+    "changed_pixel_count",
+    "changed_pixel_pct",
+    "mean_delta_db",
+    "changed_area_km2",
+    "pixel_area_method"
+  ],
+  "properties": {
+    "valid_pixel_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "changed_pixel_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "changed_pixel_pct": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "mean_delta_db": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "changed_area_km2": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "pixel_area_method": {
+      "enum": [
+        "projected_equal_area",
+        "geodesic",
+        "not_calculated"
+      ]
+    }
+  }
+}

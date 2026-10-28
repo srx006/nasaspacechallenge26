@@ -1,0 +1,58 @@
+{
+  "id": "analysis-d084-d085-rejected",
+  "area_id": "aoi-parita-candidate",
+  "scene_ids": [
+    "scene-d084-20261014",
+    "scene-d085-20261014"
+  ],
+  "status": "pair_rejected",
+  "pair_assessment": {
+    "decision": "NO_GO",
+    "reason": "Adjacent frames on same October 14 acquisition pass; not two independent temporal observations.",
+    "temporal_distinct": false,
+    "spatial_overlap_verified": null,
+    "geometry_compatible": null
+  },
+  "channel": "unselected",
+  "method": "unselected",
+  "layers": [],
+  "statistics": {
+    "valid_pixel_count": null,
+    "changed_pixel_count": null,
+    "changed_pixel_pct": null,
+    "mean_delta_db": null,
+    "changed_area_km2": null,
+    "pixel_area_method": "not_calculated"
+  },
+  "provenance": {
+    "source_granule_ids": [
+      "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
+      "NISAR_L2_PR_GCOV_033_040_D_085_4005_DHDH_A_20261014T234516_20261014T234533_P05023_N_P_J_001"
+    ],
+    "source_dataset_paths": [],
+    "processing_status": "not_started",
+    "processing_software": {},
+    "processing_parameters": {},
+    "quality_checks": [
+      {
+        "check": "different acquisition dates",
+        "status": "fail",
+        "evidence_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json"
+      }
+    ],
+    "processed_at_utc": null,
+    "output_sha256": null,
+    "notes": [
+      "No raster calculation conducted."
+    ]
+  },
+  "limitations": [
+    "No temporal pair: analysis cannot produce observed surface change.",
+    "No extracted NISAR raster or evaluated pixel-quality masks."
+  ],
+  "scientific_claim_level": "catalog_only",
+  "reference_urls": [
+    "https://cmr.earthdata.nasa.gov/search/concepts/G4371433684-ASF.umm_json",
+    "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json"
+  ]
+}

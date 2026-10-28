@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISTMOSAR Change Analysis v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "area_id",
+    "scene_ids",
+    "status",
+    "pair_assessment",
+    "channel",
+    "method",
+    "layers",
+    "statistics",
+    "provenance",
+    "limitations",
+    "scientific_claim_level"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "area_id": {
+      "type": "string"
+    },
+    "scene_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "pair_rejected",
+        "pair_pending",
+        "processing_planned",
+        "processed_unverified",
+        "qa_passed"
+      ]
+    },
+    "pair_assessment": {
+      "type": "object",
+      "required": [
+        "decision",
+        "reason",
+        "temporal_distinct",
+        "spatial_overlap_verified",
+        "geometry_compatible"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "enum": [
+            "GO",
+            "NO_GO",
+            "PENDING"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "temporal_distinct": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "spatial_overlap_verified": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "geometry_compatible": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "channel": {
+      "enum": [
+        "HHHH",
+        "HVHV",
+        "VVVV",
+        "VHVH",
+        "unselected"
+      ]
+    },
+    "method": {
+      "enum": [
+        "delta_db",
+        "pairwise_log_ratio",
+        "unselected"
+      ]
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "$ref": "layer.schema.json"
+      }
+    },
+    "statistics": {
+      "$ref": "statistics.schema.json"
+    },
+    "provenance": {
+      "$ref": "provenance.schema.json"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scientific_claim_level": {
+      "enum": [
+        "catalog_only",
+        "radar_change",
+        "candidate_water_change",
+        "validated_water_change"
+      ]
+    },
+    "reference_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    }
+  }
+}

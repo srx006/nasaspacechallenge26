@@ -1,0 +1,54 @@
+{
+  "id": "scene-d084-20261014",
+  "granule_id": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
+  "cmr_concept_id": "G4371433684-ASF",
+  "collection": "NISAR_L2_GCOV_PROVISIONAL_V1",
+  "product": "L2_GCOV",
+  "acquisition_start_utc": "2026-10-14T23:44:44Z",
+  "acquisition_end_utc": "2026-10-14T23:45:17.999Z",
+  "track": 40,
+  "direction": "descending",
+  "frame": 84,
+  "polarizations_nominal": [
+    "HH",
+    "HV"
+  ],
+  "polarizations_verified": [],
+  "footprint": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -80.26337,
+          10.13579
+        ],
+        [
+          -80.73495,
+          8.1088
+        ],
+        [
+          -78.5114,
+          7.59366
+        ],
+        [
+          -78.0291,
+          9.61261
+        ],
+        [
+          -80.26337,
+          10.13579
+        ]
+      ]
+    ]
+  },
+  "source_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371433684-ASF.umm_json",
+  "file_size_bytes": 4991221760,
+  "md5": "c2099bd62c6be734c93f20e2c61a27f0",
+  "catalog_status": "catalog_verified",
+  "raster_status": "not_extracted",
+  "raster_layer_id": null,
+  "notes": [
+    "Nominal HH/HV derived from granule naming; actual HDF5 datasets not yet inspected.",
+    "Footprint represents catalog coverage, not QA-passed valid pixels."
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISTMOSAR NISAR GCOV Scene v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "granule_id",
+    "collection",
+    "product",
+    "acquisition_start_utc",
+    "acquisition_end_utc",
+    "track",
+    "direction",
+    "frame",
+    "polarizations_nominal",
+    "footprint",
+    "source_url",
+    "catalog_status",
+    "raster_status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "granule_id": {
+      "type": "string"
+    },
+    "cmr_concept_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "collection": {
+      "type": "string"
+    },
+    "product": {
+      "const": "L2_GCOV"
+    },
+    "acquisition_start_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "acquisition_end_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "track": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "direction": {
+      "enum": [
+        "ascending",
+        "descending"
+      ]
+    },
+    "frame": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "polarizations_nominal": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "HH",
+          "HV",
+          "VV",
+          "VH"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "polarizations_verified": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "HH",
+          "HV",
+          "VV",
+          "VH"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "footprint": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "Polygon"
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number",
+                      "minimum": -180,
+                      "maximum": 180
+                    },
+                    {
+                      "type": "number",
+                      "minimum": -90,
+                      "maximum": 90
+                    }
+                  ],
+                  "items": false
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_size_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "md5": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "catalog_status": {
+      "enum": [
+        "candidate",
+        "catalog_verified",
+        "rejected"
+      ]
+    },
+    "raster_status": {
+      "enum": [
+        "not_extracted",
+        "extracted_unverified",
+        "qa_passed",
+        "rejected"
+      ]
+    },
+    "raster_layer_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

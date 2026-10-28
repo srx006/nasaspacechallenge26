@@ -1,0 +1,13 @@
+{
+  "id": "aoi-chagres-gatun-candidate",
+  "name": "Chagres / Gatún research bounding box",
+  "region": "Panama",
+  "bbox_lonlat": [
+    -80.5,
+    8.8,
+    -79.3,
+    9.8
+  ],
+  "status": "candidate",
+  "geometry": null
+}

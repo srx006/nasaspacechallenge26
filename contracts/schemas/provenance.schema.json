@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISTMOSAR Processing Provenance v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_granule_ids",
+    "source_dataset_paths",
+    "processing_status",
+    "processing_software",
+    "processing_parameters",
+    "quality_checks",
+    "processed_at_utc"
+  ],
+  "properties": {
+    "source_granule_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_dataset_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "processing_status": {
+      "enum": [
+        "not_started",
+        "planned",
+        "executed_unverified",
+        "qa_passed",
+        "failed"
+      ]
+    },
+    "processing_software": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "processing_parameters": {
+      "type": "object"
+    },
+    "quality_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "check",
+          "status"
+        ],
+        "properties": {
+          "check": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "pass",
+              "fail",
+              "not_applicable"
+            ]
+          },
+          "evidence_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "processed_at_utc": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
