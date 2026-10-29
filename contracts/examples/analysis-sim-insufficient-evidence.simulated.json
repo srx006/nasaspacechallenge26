@@ -1,0 +1,174 @@
+{
+  "id": "sim-analysis-insufficient-evidence",
+  "data_category": "SIMULATED_DATA",
+  "area_id": "aoi-sim-training-box",
+  "scene_ids": [
+    "sim-scene-earlier",
+    "sim-scene-later"
+  ],
+  "temporal_relationship": {
+    "classification": "DISTINCT_ACQUISITIONS",
+    "earlier_scene_id": "sim-scene-earlier",
+    "later_scene_id": "sim-scene-later",
+    "interval_seconds": 1036800
+  },
+  "compatibility": {
+    "decision": "INSUFFICIENT_EVIDENCE",
+    "evidence_level": "CATALOG_METADATA",
+    "summary": "SIMULATED: some catalog-level checks could not be evaluated, so neither GO nor NO_GO can be stated.",
+    "checks": [
+      {
+        "check_id": "TEMPORAL_INDEPENDENCE",
+        "result": "PASS",
+        "message": "SIMULATED: different cycles."
+      },
+      {
+        "check_id": "SAME_TRACK",
+        "result": "PASS",
+        "message": "SIMULATED: same track."
+      },
+      {
+        "check_id": "SAME_DIRECTION",
+        "result": "PASS",
+        "message": "SIMULATED: same direction."
+      },
+      {
+        "check_id": "SAME_FRAME",
+        "result": "PASS",
+        "message": "SIMULATED: same frame."
+      },
+      {
+        "check_id": "SAME_RADAR_MODE",
+        "result": "PASS",
+        "message": "SIMULATED: same mode."
+      },
+      {
+        "check_id": "COMPATIBLE_MATURITY_AND_VERSION",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "CATALOG_FOOTPRINT_OVERLAP",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "CHANNEL_VERIFIED_IN_BOTH",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "SAME_MEASUREMENT_CONVENTION",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "VALID_PIXEL_OVERLAP",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "GRID_ALIGNMENT",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      },
+      {
+        "check_id": "QUALITY_REVIEW",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: not evaluated; required metadata is missing."
+      }
+    ],
+    "assessed_by": "SIMULATED-ASSESSOR",
+    "assessed_on": "2000-01-14"
+  },
+  "selected_channel": null,
+  "measurement_convention": null,
+  "processing_method": null,
+  "parameters": {
+    "change_threshold_db": null,
+    "threshold_rule": null,
+    "use_product_mask": null,
+    "subset_bbox_lonlat": null,
+    "speckle_filter": null
+  },
+  "lifecycle_status": "NOT_STARTED",
+  "layer_ids": [],
+  "statistics": {
+    "id": "sim-statistics-insufficient",
+    "data_category": "UNAVAILABLE",
+    "total_pixels_inspected": null,
+    "valid_pixel_count": null,
+    "invalid_pixel_count": null,
+    "changed_pixel_count": null,
+    "changed_pixel_pct": null,
+    "mean_delta_db": null,
+    "change_threshold": null,
+    "changed_area_km2": null,
+    "area_method": "NOT_CALCULATED",
+    "area_crs": null,
+    "qc_notes": [
+      "SIMULATED: no calculation because evidence is insufficient."
+    ]
+  },
+  "provenance": {
+    "id": "sim-provenance-insufficient",
+    "status": "NOT_STARTED",
+    "sources": [
+      {
+        "scene_id": "sim-scene-earlier",
+        "granule_id": "SIMULATED-SCENE-EARLIER-001",
+        "cmr_concept_id": null,
+        "catalog_url": "https://example.invalid/sim/catalog/sim-scene-earlier",
+        "collection": "SIMULATED_COLLECTION",
+        "product_maturity": "NOT_APPLICABLE",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [],
+        "catalog_checksum": null,
+        "local_sha256": null
+      },
+      {
+        "scene_id": "sim-scene-later",
+        "granule_id": "SIMULATED-SCENE-LATER-001",
+        "cmr_concept_id": null,
+        "catalog_url": "https://example.invalid/sim/catalog/sim-scene-later",
+        "collection": "SIMULATED_COLLECTION",
+        "product_maturity": "NOT_APPLICABLE",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [],
+        "catalog_checksum": null,
+        "local_sha256": null
+      }
+    ],
+    "processing": null,
+    "outputs": [],
+    "quality_checks": [],
+    "review": {
+      "status": "NOT_REVIEWED",
+      "reviewer": null,
+      "reviewed_on": null,
+      "notes": null
+    },
+    "notes": []
+  },
+  "scientific_claim_level": "CATALOG_ONLY",
+  "limitations": [
+    "SIMULATED_DATA: no satellite observation was used.",
+    "INSUFFICIENT_EVIDENCE is not a rejection; more metadata is needed."
+  ],
+  "approval": {
+    "status": "NOT_REVIEWED",
+    "reviewer": null,
+    "reviewed_on": null,
+    "notes": null
+  },
+  "reference_urls": [],
+  "notes": []
+}

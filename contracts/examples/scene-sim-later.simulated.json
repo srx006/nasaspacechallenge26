@@ -1,0 +1,87 @@
+{
+  "id": "sim-scene-later",
+  "data_category": "SIMULATED_DATA",
+  "cmr_concept_id": null,
+  "granule_id": "SIMULATED-SCENE-LATER-001",
+  "collection": "SIMULATED_COLLECTION",
+  "collection_concept_id": null,
+  "product": "L2_GCOV",
+  "product_maturity": "NOT_APPLICABLE",
+  "product_version": null,
+  "crid": null,
+  "acquisition_start_utc": "2000-01-13T00:00:00Z",
+  "acquisition_end_utc": "2000-01-13T00:00:30Z",
+  "direction": "DESCENDING",
+  "cycle": 2,
+  "track": 1,
+  "frame": 1,
+  "orbit_number": null,
+  "frame_coverage": "FULL",
+  "radar_band": "L",
+  "radar_mode_code": "4005",
+  "frequencies": [
+    {
+      "band": "A",
+      "range_bandwidth_mhz": 40,
+      "polarizations_nominal": [
+        "HH",
+        "HV"
+      ],
+      "covariance_terms_verified": [
+        "HHHH",
+        "HVHV"
+      ]
+    }
+  ],
+  "footprint": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -0.1,
+          -0.1
+        ],
+        [
+          0.1,
+          -0.1
+        ],
+        [
+          0.1,
+          0.1
+        ],
+        [
+          -0.1,
+          0.1
+        ],
+        [
+          -0.1,
+          -0.1
+        ]
+      ]
+    ]
+  },
+  "catalog_updated_utc": null,
+  "source_url": "https://example.invalid/sim/catalog/sim-scene-later",
+  "official_qa_references": [],
+  "file": null,
+  "catalog_status": "CANDIDATE",
+  "catalog_verified_on": null,
+  "hdf5_inspection": {
+    "status": "INSPECTED",
+    "inspected_at_utc": "2000-01-02T00:00:00Z",
+    "inspected_by": "SIMULATED-INSPECTOR"
+  },
+  "extraction_status": "NOT_EXTRACTED",
+  "raster_layer_id": null,
+  "quality_review": {
+    "status": "NOT_REVIEWED",
+    "reviewer": null,
+    "reviewed_on": null,
+    "notes": null
+  },
+  "provenance": null,
+  "limitations": [
+    "SIMULATED_DATA: not a NISAR observation. Dates are in 2000, before the mission existed."
+  ],
+  "notes": []
+}

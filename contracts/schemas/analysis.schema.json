@@ -1,109 +1,461 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ISTMOSAR Change Analysis v1",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/analysis.schema.json",
+  "title": "ISTMOSAR Scientific Analysis v1",
+  "description": "Pairwise comparison of two scenes. Three independent axes: compatibility.decision, lifecycle_status, approval.status.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
+    "data_category",
     "area_id",
     "scene_ids",
-    "status",
-    "pair_assessment",
-    "channel",
-    "method",
-    "layers",
+    "temporal_relationship",
+    "compatibility",
+    "selected_channel",
+    "measurement_convention",
+    "processing_method",
+    "parameters",
+    "lifecycle_status",
+    "layer_ids",
     "statistics",
     "provenance",
+    "scientific_claim_level",
     "limitations",
-    "scientific_claim_level"
+    "approval",
+    "reference_urls"
   ],
   "properties": {
     "id": {
-      "type": "string"
+      "$ref": "common.schema.json#/$defs/Id"
+    },
+    "data_category": {
+      "enum": [
+        "VERIFIED_METADATA",
+        "SIMULATED_DATA",
+        "PROCESSED_NISAR_DATA"
+      ],
+      "description": "VERIFIED_METADATA: the record rests on verified catalog metadata only (no computed results)."
     },
     "area_id": {
-      "type": "string"
+      "$ref": "common.schema.json#/$defs/Id"
     },
     "scene_ids": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
       "minItems": 2,
-      "maxItems": 2
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/Id"
+      }
     },
-    "status": {
-      "enum": [
-        "candidate",
-        "pair_rejected",
-        "pair_pending",
-        "processing_planned",
-        "processed_unverified",
-        "qa_passed"
+    "temporal_relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "earlier_scene_id",
+        "later_scene_id",
+        "interval_seconds"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "SAME_ACQUISITION",
+            "DISTINCT_ACQUISITIONS",
+            "UNDETERMINED"
+          ],
+          "description": "SAME_ACQUISITION: same relative track in the same cycle (one pass). Never a valid before/after pair."
+        },
+        "earlier_scene_id": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "later_scene_id": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/Id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "interval_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Difference between acquisition start times in whole seconds."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "DISTINCT_ACQUISITIONS"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "earlier_scene_id": {
+                "type": "string"
+              },
+              "later_scene_id": {
+                "type": "string"
+              },
+              "interval_seconds": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "enum": [
+                  "SAME_ACQUISITION",
+                  "UNDETERMINED"
+                ]
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "earlier_scene_id": {
+                "type": "null"
+              },
+              "later_scene_id": {
+                "type": "null"
+              }
+            }
+          }
+        }
       ]
     },
-    "pair_assessment": {
+    "compatibility": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "decision",
-        "reason",
-        "temporal_distinct",
-        "spatial_overlap_verified",
-        "geometry_compatible"
+        "evidence_level",
+        "summary",
+        "checks",
+        "assessed_by",
+        "assessed_on"
       ],
-      "additionalProperties": false,
       "properties": {
         "decision": {
           "enum": [
+            "PENDING",
             "GO",
             "NO_GO",
-            "PENDING"
+            "INSUFFICIENT_EVIDENCE"
           ]
         },
-        "reason": {
-          "type": "string"
+        "evidence_level": {
+          "enum": [
+            "NONE",
+            "CATALOG_METADATA",
+            "HDF5_METADATA",
+            "PIXEL_CHECKS_PASSED"
+          ],
+          "description": "Highest level of evidence behind the decision. A GO at CATALOG_METADATA is preliminary, never scientific validation."
         },
-        "temporal_distinct": {
+        "summary": {
+          "$ref": "common.schema.json#/$defs/NonEmptyText"
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check_id",
+              "result",
+              "message"
+            ],
+            "properties": {
+              "check_id": {
+                "enum": [
+                  "TEMPORAL_INDEPENDENCE",
+                  "SAME_TRACK",
+                  "SAME_DIRECTION",
+                  "SAME_FRAME",
+                  "SAME_RADAR_MODE",
+                  "COMPATIBLE_MATURITY_AND_VERSION",
+                  "CATALOG_FOOTPRINT_OVERLAP",
+                  "CHANNEL_VERIFIED_IN_BOTH",
+                  "SAME_MEASUREMENT_CONVENTION",
+                  "VALID_PIXEL_OVERLAP",
+                  "GRID_ALIGNMENT",
+                  "QUALITY_REVIEW"
+                ]
+              },
+              "result": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "NOT_EVALUATED"
+                ]
+              },
+              "message": {
+                "$ref": "common.schema.json#/$defs/NonEmptyText"
+              }
+            }
+          }
+        },
+        "assessed_by": {
           "type": [
-            "boolean",
+            "string",
             "null"
           ]
         },
-        "spatial_overlap_verified": {
+        "assessed_on": {
           "type": [
-            "boolean",
+            "string",
             "null"
-          ]
-        },
-        "geometry_compatible": {
-          "type": [
-            "boolean",
-            "null"
-          ]
+          ],
+          "format": "date"
         }
-      }
-    },
-    "channel": {
-      "enum": [
-        "HHHH",
-        "HVHV",
-        "VVVV",
-        "VHVH",
-        "unselected"
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "NO_GO"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checks": {
+                "contains": {
+                  "properties": {
+                    "result": {
+                      "const": "FAIL"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "GO"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checks": {
+                "not": {
+                  "contains": {
+                    "properties": {
+                      "result": {
+                        "const": "FAIL"
+                      }
+                    },
+                    "required": [
+                      "result"
+                    ]
+                  }
+                }
+              },
+              "evidence_level": {
+                "enum": [
+                  "CATALOG_METADATA",
+                  "HDF5_METADATA",
+                  "PIXEL_CHECKS_PASSED"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "INSUFFICIENT_EVIDENCE"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checks": {
+                "not": {
+                  "contains": {
+                    "properties": {
+                      "result": {
+                        "const": "FAIL"
+                      }
+                    },
+                    "required": [
+                      "result"
+                    ]
+                  }
+                },
+                "contains": {
+                  "properties": {
+                    "result": {
+                      "const": "NOT_EVALUATED"
+                    }
+                  },
+                  "required": [
+                    "result"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "PENDING"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "checks": {
+                "items": {
+                  "properties": {
+                    "result": {
+                      "const": "NOT_EVALUATED"
+                    }
+                  }
+                }
+              },
+              "evidence_level": {
+                "const": "NONE"
+              },
+              "assessed_on": {
+                "type": "null"
+              }
+            }
+          }
+        }
       ]
     },
-    "method": {
-      "enum": [
-        "delta_db",
-        "pairwise_log_ratio",
-        "unselected"
+    "selected_channel": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "covariance_term",
+            "frequency_band"
+          ],
+          "properties": {
+            "covariance_term": {
+              "$ref": "common.schema.json#/$defs/DiagonalCovarianceTerm"
+            },
+            "frequency_band": {
+              "$ref": "common.schema.json#/$defs/FrequencyBand"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
       ]
     },
-    "layers": {
+    "measurement_convention": {
+      "enum": [
+        "GAMMA0",
+        "SIGMA0",
+        null
+      ]
+    },
+    "processing_method": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "difference_convention",
+            "power_to_db",
+            "valid_input_rule"
+          ],
+          "properties": {
+            "id": {
+              "const": "PAIRWISE_DELTA_DB"
+            },
+            "difference_convention": {
+              "const": "LATER_MINUS_EARLIER"
+            },
+            "power_to_db": {
+              "const": "10*log10(P)"
+            },
+            "valid_input_rule": {
+              "const": "FINITE_POSITIVE_LINEAR_POWER"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parameters": {
+      "$ref": "common.schema.json#/$defs/ProcessingParameters"
+    },
+    "lifecycle_status": {
+      "enum": [
+        "NOT_STARTED",
+        "PLANNED",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED"
+      ],
+      "description": "Processing lifecycle. Independent of compatibility.decision and of approval.status."
+    },
+    "layer_ids": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
-        "$ref": "layer.schema.json"
-      }
+        "$ref": "common.schema.json#/$defs/Id"
+      },
+      "description": "Output layers, served by GET /api/analyses/{id}/layers."
     },
     "statistics": {
       "$ref": "statistics.schema.json"
@@ -111,26 +463,287 @@
     "provenance": {
       "$ref": "provenance.schema.json"
     },
+    "scientific_claim_level": {
+      "enum": [
+        "CATALOG_ONLY",
+        "RADAR_BACKSCATTER_CHANGE"
+      ],
+      "description": "Level 3+ water/flood claims are outside this contract version (optional extension)."
+    },
     "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/NonEmptyText"
+      }
+    },
+    "approval": {
+      "$ref": "common.schema.json#/$defs/ReviewRecord"
+    },
+    "reference_urls": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "common.schema.json#/$defs/HttpsUrl"
+      }
+    },
+    "notes": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "decision": {
+                "enum": [
+                  "PENDING",
+                  "NO_GO",
+                  "INSUFFICIENT_EVIDENCE"
+                ]
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        },
+        "required": [
+          "compatibility"
+        ]
+      },
+      "then": {
+        "properties": {
+          "layer_ids": {
+            "maxItems": 0
+          },
+          "statistics": {
+            "properties": {
+              "data_category": {
+                "const": "UNAVAILABLE"
+              }
+            }
+          },
+          "scientific_claim_level": {
+            "const": "CATALOG_ONLY"
+          },
+          "selected_channel": {
+            "type": "null"
+          },
+          "measurement_convention": {
+            "const": null
+          },
+          "processing_method": {
+            "type": "null"
+          },
+          "provenance": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "NOT_STARTED",
+                  "PLANNED"
+                ]
+              }
+            }
+          }
+        }
+      }
     },
-    "scientific_claim_level": {
-      "enum": [
-        "catalog_only",
-        "radar_change",
-        "candidate_water_change",
-        "validated_water_change"
-      ]
+    {
+      "if": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "decision": {
+                "enum": [
+                  "NO_GO",
+                  "INSUFFICIENT_EVIDENCE"
+                ]
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        },
+        "required": [
+          "compatibility"
+        ]
+      },
+      "then": {
+        "properties": {
+          "lifecycle_status": {
+            "const": "NOT_STARTED"
+          }
+        }
+      }
     },
-    "reference_urls": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "format": "uri"
+    {
+      "if": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "decision": {
+                "const": "PENDING"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        },
+        "required": [
+          "compatibility"
+        ]
+      },
+      "then": {
+        "properties": {
+          "lifecycle_status": {
+            "enum": [
+              "NOT_STARTED",
+              "PLANNED"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "lifecycle_status": {
+            "const": "COMPLETED"
+          }
+        },
+        "required": [
+          "lifecycle_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compatibility": {
+            "properties": {
+              "decision": {
+                "const": "GO"
+              },
+              "evidence_level": {
+                "const": "PIXEL_CHECKS_PASSED"
+              }
+            }
+          },
+          "statistics": {
+            "properties": {
+              "data_category": {
+                "enum": [
+                  "SIMULATED_DATA",
+                  "PROCESSED_NISAR_DATA"
+                ]
+              }
+            }
+          },
+          "layer_ids": {
+            "minItems": 1
+          },
+          "selected_channel": {
+            "type": "object"
+          },
+          "measurement_convention": {
+            "enum": [
+              "GAMMA0",
+              "SIGMA0"
+            ]
+          },
+          "processing_method": {
+            "type": "object"
+          },
+          "provenance": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "EXECUTED_UNVERIFIED",
+                  "VERIFIED"
+                ]
+              }
+            }
+          },
+          "scientific_claim_level": {
+            "const": "RADAR_BACKSCATTER_CHANGE"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "scientific_claim_level": {
+            "const": "CATALOG_ONLY"
+          },
+          "statistics": {
+            "properties": {
+              "data_category": {
+                "const": "UNAVAILABLE"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "approval": {
+            "properties": {
+              "status": {
+                "const": "APPROVED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "compatibility": {
+            "properties": {
+              "decision": {
+                "const": "GO"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        },
+        "required": [
+          "approval",
+          "compatibility"
+        ]
+      },
+      "then": {
+        "properties": {
+          "lifecycle_status": {
+            "const": "COMPLETED"
+          },
+          "compatibility": {
+            "properties": {
+              "evidence_level": {
+                "const": "PIXEL_CHECKS_PASSED"
+              }
+            }
+          },
+          "provenance": {
+            "properties": {
+              "review": {
+                "properties": {
+                  "status": {
+                    "const": "APPROVED"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
-  }
+  ]
 }

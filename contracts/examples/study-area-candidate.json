@@ -1,13 +1,32 @@
 {
   "id": "aoi-chagres-gatun-candidate",
+  "data_category": "PROPOSED_STRUCTURE",
   "name": "Chagres / Gatún research bounding box",
-  "region": "Panama",
+  "country": "PA",
+  "region": "Central Panama (Chagres / Gatún, Panama Canal watershed)",
   "bbox_lonlat": [
     -80.5,
     8.8,
     -79.3,
     9.8
   ],
-  "status": "candidate",
-  "geometry": null
+  "crs": "EPSG:4326",
+  "geometry": null,
+  "selection_status": "CANDIDATE",
+  "scientific_purpose": "Candidate area for the Level 1 / Level 2 surface-water change case study. Not yet approved as a scientific case.",
+  "evidence_refs": [
+    {
+      "kind": "REPOSITORY_PATH",
+      "ref": "MH-01-Verification/Chagres-Gatun.json",
+      "note": "Its bounding_box query parameter defines this box."
+    },
+    {
+      "kind": "EVIDENCE_INDEX_ID",
+      "ref": "EV-CMR-001",
+      "note": "D084, the initial candidate scene for this area (docs/Stage-0-Decisions.md)."
+    }
+  ],
+  "notes": [
+    "Box coordinates are [west, south, east, north] in decimal degrees."
+  ]
 }

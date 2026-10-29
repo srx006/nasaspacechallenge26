@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/common.schema.json",
+  "title": "ISTMOSAR common definitions v1",
+  "description": "Shared definitions referenced by every other ISTMOSAR contract schema. Contract version 1.0.0-rc.1.",
+  "$defs": {
+    "ContractVersion": {
+      "type": "string",
+      "pattern": "^1\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$",
+      "description": "Semantic version of the data contract. Major version 1 only."
+    },
+    "Id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,79}$",
+      "description": "Internal stable identifier: lowercase letters, digits and hyphens, 3-80 chars. Never a file path."
+    },
+    "UtcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
+      "description": "RFC 3339 UTC timestamp. Must end in 'Z'; numeric offsets such as +00:00 are rejected. Fractional seconds (max 6 digits) are allowed so official CMR values can be kept verbatim."
+    },
+    "Longitude": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "Latitude": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "Position": {
+      "type": "array",
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/Longitude"
+        },
+        {
+          "$ref": "#/$defs/Latitude"
+        }
+      ],
+      "items": false,
+      "description": "[longitude, latitude] in EPSG:4326 (GeoJSON order). No altitude."
+    },
+    "BBoxLonLat": {
+      "type": "array",
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/Longitude"
+        },
+        {
+          "$ref": "#/$defs/Latitude"
+        },
+        {
+          "$ref": "#/$defs/Longitude"
+        },
+        {
+          "$ref": "#/$defs/Latitude"
+        }
+      ],
+      "items": false,
+      "description": "[west, south, east, north] in EPSG:4326 degrees. west < east and south < north are business rules (BR-04), not enforced by JSON Schema."
+    },
+    "PolygonLonLat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "properties": {
+        "type": {
+          "const": "Polygon"
+        },
+        "coordinates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "$ref": "#/$defs/Position"
+            }
+          }
+        }
+      },
+      "description": "GeoJSON Polygon, [longitude, latitude] vertices, EPSG:4326. Ring closure (first == last vertex) is a business rule (BR-04)."
+    },
+    "CmrGranuleConceptId": {
+      "type": "string",
+      "pattern": "^G\\d{6,}-[A-Z0-9_]+$",
+      "description": "NASA CMR granule concept ID, e.g. G4371433684-ASF."
+    },
+    "CmrCollectionConceptId": {
+      "type": "string",
+      "pattern": "^C\\d{6,}-[A-Z0-9_]+$",
+      "description": "NASA CMR collection concept ID, e.g. C2854338529-ASF."
+    },
+    "NisarGranuleId": {
+      "type": "string",
+      "pattern": "^NISAR_L2_[A-Z]{2}_GCOV_\\d{3}_\\d{3}_[AD]_\\d{3}_\\d{4}_[A-Z]{4}_[AM]_\\d{8}T\\d{6}_\\d{8}T\\d{6}_[A-Z]\\d{5}_[PMNF]_[FP]_[A-Z]_\\d{3}$",
+      "description": "Complete, unmodified NISAR L2 GCOV producer granule identifier (no extension). Truncated identifiers are rejected."
+    },
+    "SimulatedGranuleId": {
+      "type": "string",
+      "pattern": "^SIMULATED-[A-Za-z0-9-]{3,80}$",
+      "description": "Placeholder identifier for SIMULATED_DATA records only. Never a real NISAR granule."
+    },
+    "Md5": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "HttpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^\\s]+$",
+      "description": "Absolute https URL. Local paths (C:\\..., file://, /home/...) and s3:// URLs are rejected."
+    },
+    "EpsgCode": {
+      "type": "string",
+      "pattern": "^EPSG:[0-9]{4,6}$"
+    },
+    "DataCategory": {
+      "enum": [
+        "VERIFIED_METADATA",
+        "PROPOSED_STRUCTURE",
+        "SIMULATED_DATA",
+        "UNAVAILABLE",
+        "PROCESSED_NISAR_DATA"
+      ],
+      "description": "VERIFIED_METADATA: independently checked official NASA record. PROPOSED_STRUCTURE: design example / team-defined object. SIMULATED_DATA: artificial, never satellite data. UNAVAILABLE: result not generated. PROCESSED_NISAR_DATA: reserved for real, provenance-backed outputs (no fixture uses it)."
+    },
+    "CovarianceTerm": {
+      "type": "string",
+      "pattern": "^[HVR]{4}$",
+      "description": "GCOV covariance dataset name, e.g. HHHH, HVHV, HHHV."
+    },
+    "DiagonalCovarianceTerm": {
+      "enum": [
+        "HHHH",
+        "HVHV",
+        "VVVV",
+        "VHVH"
+      ],
+      "description": "Real-valued diagonal GCOV terms allowed for Level 2 change analysis."
+    },
+    "FrequencyBand": {
+      "enum": [
+        "A",
+        "B"
+      ],
+      "description": "NISAR L-SAR frequency group: /science/LSAR/GCOV/grids/frequencyA or frequencyB."
+    },
+    "Polarization": {
+      "enum": [
+        "HH",
+        "HV",
+        "VV",
+        "VH"
+      ]
+    },
+    "NonEmptyText": {
+      "type": "string",
+      "minLength": 3
+    },
+    "ReviewRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewer",
+        "reviewed_on",
+        "notes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_REVIEWED",
+            "IN_REVIEW",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 2
+        },
+        "reviewed_on": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "description": "Human review state. APPROVED/REJECTED require reviewer and date; NOT_REVIEWED requires both null.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "APPROVED",
+                  "REJECTED"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reviewer": {
+                "type": "string"
+              },
+              "reviewed_on": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NOT_REVIEWED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reviewer": {
+                "type": "null"
+              },
+              "reviewed_on": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProcessingParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "change_threshold_db",
+        "threshold_rule",
+        "use_product_mask",
+        "subset_bbox_lonlat",
+        "speckle_filter"
+      ],
+      "properties": {
+        "change_threshold_db": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "description": "Absolute |Delta_dB| threshold in dB."
+        },
+        "threshold_rule": {
+          "enum": [
+            "ABS_DELTA_GTE",
+            null
+          ],
+          "description": "Changed pixel when |Delta_dB| >= threshold."
+        },
+        "use_product_mask": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Apply the GCOV mask dataset when building the valid-pixel mask."
+        },
+        "subset_bbox_lonlat": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BBoxLonLat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "speckle_filter": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Free-text name of any smoothing applied, or null if none."
+        }
+      },
+      "description": "Closed parameter set. Unknown keys are rejected so secrets or credentials cannot be smuggled in."
+    }
+  }
+}

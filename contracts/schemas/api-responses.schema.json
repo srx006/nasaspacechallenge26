@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/api-responses.schema.json",
+  "title": "ISTMOSAR API response envelopes v1",
+  "description": "Every list endpoint returns the same envelope {contract_version, items, page}. Single-resource endpoints return the bare resource object. Validate against a definition with api-responses.schema.json#/$defs/<Name>.",
+  "$defs": {
+    "PageInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit",
+        "offset",
+        "total"
+      ],
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "description": "limit/offset pagination. total = number of records matching the filters, before paging."
+    },
+    "HealthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "contract_version"
+      ],
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "contract_version": {
+          "$ref": "common.schema.json#/$defs/ContractVersion"
+        }
+      },
+      "description": "Process availability only. Says nothing about scientific data readiness."
+    },
+    "StudyAreaList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "contract_version": {
+          "$ref": "common.schema.json#/$defs/ContractVersion"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "study-area.schema.json"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/PageInfo"
+        }
+      },
+      "description": "GET /api/study-areas"
+    },
+    "SceneList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "contract_version": {
+          "$ref": "common.schema.json#/$defs/ContractVersion"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "scene.schema.json"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/PageInfo"
+        }
+      },
+      "description": "GET /api/scenes"
+    },
+    "AnalysisList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "contract_version": {
+          "$ref": "common.schema.json#/$defs/ContractVersion"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "analysis.schema.json"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/PageInfo"
+        }
+      },
+      "description": "GET /api/analyses"
+    },
+    "LayerList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "items",
+        "page"
+      ],
+      "properties": {
+        "contract_version": {
+          "$ref": "common.schema.json#/$defs/ContractVersion"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "layer.schema.json"
+          }
+        },
+        "page": {
+          "$ref": "#/$defs/PageInfo"
+        }
+      },
+      "description": "GET /api/analyses/{id}/layers and GET /api/scenes/{id}/layers. An empty items array is a normal 200 response."
+    }
+  }
+}

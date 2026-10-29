@@ -1,0 +1,19 @@
+{
+  "error": {
+    "code": "INCOMPATIBLE_OBSERVATIONS",
+    "message": "No change layer exists: the scene pair for this analysis was rejected as NO_GO.",
+    "http_status": 409,
+    "detail": {
+      "resource_type": "ANALYSIS",
+      "resource_id": "analysis-d084-d085-rejected",
+      "analysis_id": "analysis-d084-d085-rejected",
+      "compatibility_decision": "NO_GO",
+      "lifecycle_status": "NOT_STARTED",
+      "requested_role": "CHANGE",
+      "reason_codes": [
+        "TEMPORAL_INDEPENDENCE",
+        "SAME_FRAME"
+      ]
+    }
+  }
+}

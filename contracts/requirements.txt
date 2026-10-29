@@ -1,0 +1,5 @@
+# Dependencies for validate_contracts.py (JP-06 contract validation only; not an application stack).
+# Install from the repository root:  pip install -r contracts/requirements.txt
+# Tested with Python 3.10+ and jsonschema 4.26 / referencing 0.37.
+# The [format-nongpl] extra is REQUIRED: without it, jsonschema silently ignores the date-time and uri formats.
+jsonschema[format-nongpl]>=4.18,<5

@@ -1,30 +1,67 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/statistics.schema.json",
   "title": "ISTMOSAR Level 2 Statistics v1",
+  "description": "Quantitative summary. UNAVAILABLE means not computed: every numeric field is null, never zero.",
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "id",
+    "data_category",
+    "total_pixels_inspected",
     "valid_pixel_count",
+    "invalid_pixel_count",
     "changed_pixel_count",
     "changed_pixel_pct",
     "mean_delta_db",
+    "change_threshold",
     "changed_area_km2",
-    "pixel_area_method"
+    "area_crs",
+    "area_method",
+    "qc_notes"
   ],
   "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/Id"
+    },
+    "data_category": {
+      "enum": [
+        "UNAVAILABLE",
+        "SIMULATED_DATA",
+        "PROCESSED_NISAR_DATA"
+      ]
+    },
+    "total_pixels_inspected": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Pixels on the aligned comparison grid (valid + invalid)."
+    },
     "valid_pixel_count": {
       "type": [
         "integer",
         "null"
       ],
-      "minimum": 0
+      "minimum": 0,
+      "description": "Pixels finite, positive and unmasked in BOTH scenes."
+    },
+    "invalid_pixel_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Excluded pixels: nodata, mask-invalid, non-positive or non-finite power in either scene."
     },
     "changed_pixel_count": {
       "type": [
         "integer",
         "null"
       ],
-      "minimum": 0
+      "minimum": 0,
+      "description": "Valid pixels with |Delta_dB| >= change_threshold."
     },
     "changed_pixel_pct": {
       "type": [
@@ -32,12 +69,42 @@
         "null"
       ],
       "minimum": 0,
-      "maximum": 100
+      "maximum": 100,
+      "description": "100 * changed / valid; null when valid is 0 or not computed."
     },
     "mean_delta_db": {
       "type": [
         "number",
         "null"
+      ],
+      "description": "Mean Delta_dB (later minus earlier) over ALL valid pixels, in dB."
+    },
+    "change_threshold": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit",
+            "rule"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "const": "dB"
+            },
+            "rule": {
+              "const": "ABS_DELTA_GTE"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "changed_area_km2": {
@@ -45,14 +112,99 @@
         "number",
         "null"
       ],
-      "minimum": 0
+      "minimum": 0,
+      "description": "Square kilometres of valid radar change. Never derived from degree pixel spacing."
     },
-    "pixel_area_method": {
+    "area_method": {
       "enum": [
-        "projected_equal_area",
-        "geodesic",
-        "not_calculated"
+        "EQUAL_AREA_GRID",
+        "GEODESIC_PER_PIXEL",
+        "UTM_PLANIMETRIC_APPROX",
+        "NOT_CALCULATED"
       ]
+    },
+    "area_crs": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/EpsgCode"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "qc_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "data_category": {
+            "const": "UNAVAILABLE"
+          }
+        },
+        "required": [
+          "data_category"
+        ]
+      },
+      "then": {
+        "properties": {
+          "total_pixels_inspected": {
+            "type": "null"
+          },
+          "valid_pixel_count": {
+            "type": "null"
+          },
+          "invalid_pixel_count": {
+            "type": "null"
+          },
+          "changed_pixel_count": {
+            "type": "null"
+          },
+          "changed_pixel_pct": {
+            "type": "null"
+          },
+          "mean_delta_db": {
+            "type": "null"
+          },
+          "change_threshold": {
+            "type": "null"
+          },
+          "changed_area_km2": {
+            "type": "null"
+          },
+          "area_crs": {
+            "type": "null"
+          },
+          "area_method": {
+            "const": "NOT_CALCULATED"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "total_pixels_inspected": {
+            "type": "integer"
+          },
+          "valid_pixel_count": {
+            "type": "integer"
+          },
+          "invalid_pixel_count": {
+            "type": "integer"
+          },
+          "changed_pixel_count": {
+            "type": "integer"
+          },
+          "change_threshold": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
 }

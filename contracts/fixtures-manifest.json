@@ -1,0 +1,989 @@
+{
+  "manifest_version": "1.0.0-rc.1",
+  "contract_version": "1.0.0-rc.1",
+  "description": "Registry of every fixture and every mutation test. validate_contracts.py fails if a file in contracts/examples/ is missing from this list. Categories: VERIFIED_METADATA (independently checked official NASA record), PROPOSED_STRUCTURE (design example), SIMULATED_DATA (artificial; file name must contain '.simulated.'), UNAVAILABLE (result not generated).",
+  "fixtures": [
+    {
+      "file": "study-area-candidate.json",
+      "schema": "study-area.schema.json",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "A candidate geographic study area (Chagres / Gatún). Not approved."
+    },
+    {
+      "file": "study-area-gulf-of-parita-candidate.json",
+      "schema": "study-area.schema.json",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "A second candidate area; target of the D084/D085 NO_GO analysis."
+    },
+    {
+      "file": "study-area-sim-training-box.simulated.json",
+      "schema": "study-area.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic area near 0 N, 0 E for training fixtures."
+    },
+    {
+      "file": "scene-d084.catalog.json",
+      "schema": "scene.schema.json",
+      "category": "VERIFIED_METADATA",
+      "description": "Authentic D084 NASA CMR record (G4371433684-ASF); raster not extracted."
+    },
+    {
+      "file": "scene-d085.catalog.json",
+      "schema": "scene.schema.json",
+      "category": "VERIFIED_METADATA",
+      "description": "Authentic D085 NASA CMR record (G4371282627-ASF); a scene without an extracted radar layer."
+    },
+    {
+      "file": "scene-sim-earlier.simulated.json",
+      "schema": "scene.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic earlier scene with inspected channels."
+    },
+    {
+      "file": "scene-sim-later.simulated.json",
+      "schema": "scene.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic later scene with inspected channels."
+    },
+    {
+      "file": "analysis-d084-d085-NO-GO.json",
+      "schema": "analysis.schema.json",
+      "category": "VERIFIED_METADATA",
+      "description": "D084/D085 NO_GO temporal-pair decision. Statistics UNAVAILABLE, no layers."
+    },
+    {
+      "file": "analysis-sim-go-completed.simulated.json",
+      "schema": "analysis.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic GO + COMPLETED analysis showing optional fields; IN_REVIEW, not approved."
+    },
+    {
+      "file": "analysis-sim-insufficient-evidence.simulated.json",
+      "schema": "analysis.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic INSUFFICIENT_EVIDENCE analysis."
+    },
+    {
+      "file": "layer-sim-before.simulated.json",
+      "schema": "layer.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic BEFORE layer delivered as XYZ tiles."
+    },
+    {
+      "file": "layer-sim-after.simulated.json",
+      "schema": "layer.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic AFTER layer delivered as XYZ tiles."
+    },
+    {
+      "file": "layer-sim-change.simulated.json",
+      "schema": "layer.schema.json",
+      "category": "SIMULATED_DATA",
+      "description": "Synthetic CHANGE layer delivered as an image overlay."
+    },
+    {
+      "file": "api-health.json",
+      "schema": "api-responses.schema.json#/$defs/HealthResponse",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "GET /health response."
+    },
+    {
+      "file": "api-scenes-list.json",
+      "schema": "api-responses.schema.json#/$defs/SceneList",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "GET /api/scenes envelope containing the two verified scenes."
+    },
+    {
+      "file": "api-layers-list-empty.json",
+      "schema": "api-responses.schema.json#/$defs/LayerList",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "Empty-result behavior: 200 with items [] (e.g. layers of the NO_GO analysis)."
+    },
+    {
+      "file": "error-incompatible-observations.json",
+      "schema": "error.schema.json",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "Failed layer request: role=CHANGE asked of the NO_GO analysis."
+    },
+    {
+      "file": "error-resource-not-found.json",
+      "schema": "error.schema.json",
+      "category": "PROPOSED_STRUCTURE",
+      "description": "Unknown scene identifier."
+    }
+  ],
+  "mutation_cases": [
+    {
+      "id": "NEG-01",
+      "title": "Scene without its official granule identifier",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/granule_id"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "granule_id"
+    },
+    {
+      "id": "NEG-02",
+      "title": "Scene with a truncated granule identifier",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/granule_id",
+          "value": "NISAR_L2_PR_GCOV_033_040_D_084"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "granule_id"
+    },
+    {
+      "id": "NEG-03",
+      "title": "Timestamp with a space instead of T and no Z",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/acquisition_start_utc",
+          "value": "2026-10-14 23:44:44"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "acquisition_start_utc"
+    },
+    {
+      "id": "NEG-04",
+      "title": "Timestamp with a numeric UTC offset instead of Z",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/acquisition_start_utc",
+          "value": "2026-10-14T23:44:44+00:00"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "acquisition_start_utc"
+    },
+    {
+      "id": "NEG-05",
+      "title": "Verified scene without an official CMR concept ID",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/cmr_concept_id",
+          "value": null
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-06",
+      "title": "Catalog URL that is a local Windows path",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_url",
+          "value": "C:\\Users\\example\\Downloads\\scene.json"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "source_url"
+    },
+    {
+      "id": "NEG-07",
+      "title": "Study-area bbox with only three numbers",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/bbox_lonlat",
+          "value": [
+            -80.5,
+            8.8,
+            -79.3
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "bbox_lonlat"
+    },
+    {
+      "id": "NEG-08",
+      "title": "Study-area bbox with latitude 95",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/bbox_lonlat",
+          "value": [
+            -80.5,
+            95.0,
+            -79.3,
+            9.8
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "bbox_lonlat"
+    },
+    {
+      "id": "NEG-09",
+      "title": "Study-area geometry with a flat coordinate list",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/geometry",
+          "value": {
+            "type": "Polygon",
+            "coordinates": [
+              -80.5,
+              8.8,
+              -79.3,
+              9.8
+            ]
+          }
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "geometry"
+    },
+    {
+      "id": "NEG-10",
+      "title": "Layer unit written as 'decibels'",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/measurement/unit",
+          "value": "decibels"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "unit"
+    },
+    {
+      "id": "NEG-11",
+      "title": "GeoTIFF offered as a Leaflet delivery method",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/delivery/method",
+          "value": "GEOTIFF"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "method"
+    },
+    {
+      "id": "NEG-12",
+      "title": "XYZ tile template without {z}/{x}/{y}",
+      "base": "layer-sim-before.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/delivery/tile_url_template",
+          "value": "https://example.invalid/sim/tiles/before.png"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "tile_url_template"
+    },
+    {
+      "id": "NEG-13",
+      "title": "Layer image URL that is a local Windows path",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/delivery/image_href",
+          "value": "C:\\Users\\example\\Downloads\\scene.json"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "image_href"
+    },
+    {
+      "id": "NEG-14",
+      "title": "AVAILABLE layer whose raster is null",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/raster",
+          "value": null
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-15",
+      "title": "CHANGE layer with no measurement convention",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/measurement/convention",
+          "value": "NOT_APPLICABLE"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-16",
+      "title": "NO_GO analysis carrying completed statistics",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/statistics",
+          "value": {
+            "id": "stats-fake-001",
+            "data_category": "SIMULATED_DATA",
+            "total_pixels_inspected": 1000000,
+            "valid_pixel_count": 900000,
+            "invalid_pixel_count": 100000,
+            "changed_pixel_count": 90000,
+            "changed_pixel_pct": 10.0,
+            "mean_delta_db": -1.2,
+            "change_threshold": {
+              "value": 3.0,
+              "unit": "dB",
+              "rule": "ABS_DELTA_GTE"
+            },
+            "changed_area_km2": 55.5,
+            "area_method": "GEODESIC_PER_PIXEL",
+            "area_crs": null,
+            "qc_notes": []
+          }
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-17",
+      "title": "NO_GO analysis exposing an output layer",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/layer_ids",
+          "value": [
+            "sim-layer-change"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "layer_ids"
+    },
+    {
+      "id": "NEG-18",
+      "title": "NO_GO analysis marked COMPLETED",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/lifecycle_status",
+          "value": "COMPLETED"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-19",
+      "title": "NO_GO analysis claiming a radar-change result",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/scientific_claim_level",
+          "value": "RADAR_BACKSCATTER_CHANGE"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-20",
+      "title": "Analysis without provenance",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/provenance"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "provenance"
+    },
+    {
+      "id": "NEG-21",
+      "title": "Invalid compatibility decision 'MAYBE'",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/compatibility/decision",
+          "value": "MAYBE"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "decision"
+    },
+    {
+      "id": "NEG-22",
+      "title": "Analysis pairing a scene with itself",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/scene_ids",
+          "value": [
+            "scene-d084-20261014",
+            "scene-d084-20261014"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "scene_ids"
+    },
+    {
+      "id": "NEG-23",
+      "title": "Missing statistic represented by an invented zero",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/statistics/valid_pixel_count",
+          "value": 0
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-24",
+      "title": "Confirmed-flood claim level (outside contract v1)",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/scientific_claim_level",
+          "value": "VALIDATED_WATER_CHANGE"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "scientific_claim_level"
+    },
+    {
+      "id": "NEG-25",
+      "title": "Changed-pixel percentage above 100",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/statistics/changed_pixel_pct",
+          "value": 150
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "changed_pixel_pct"
+    },
+    {
+      "id": "NEG-26",
+      "title": "Credential-like key smuggled into processing parameters",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/provenance/processing/parameters/earthdata_token",
+          "value": "x"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "earthdata_token"
+    },
+    {
+      "id": "NEG-27",
+      "title": "GO decision containing a FAIL check",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/compatibility/checks/0/result",
+          "value": "FAIL"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-28",
+      "title": "APPROVED GO analysis whose provenance review is not approved",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/approval",
+          "value": {
+            "status": "APPROVED",
+            "reviewer": "SIMULATED-REVIEWER",
+            "reviewed_on": "2000-02-01",
+            "notes": null
+          }
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": null
+    },
+    {
+      "id": "NEG-29",
+      "title": "Error whose HTTP status contradicts its code",
+      "base": "error-incompatible-observations.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/error/http_status",
+          "value": 404
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "http_status"
+    },
+    {
+      "id": "NEG-30",
+      "title": "Error message leaking a stack trace and file path",
+      "base": "error-resource-not-found.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/error/message",
+          "value": "Traceback (most recent call last): File \"/home/app/main.py\""
+        }
+      ],
+      "expect": "invalid",
+      "stage": "schema",
+      "error_contains": "message"
+    },
+    {
+      "id": "BIZ-01",
+      "title": "Analysis referencing a scene that does not exist",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/scene_ids",
+          "value": [
+            "scene-d084-20261014",
+            "scene-d086-20261014"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-01"
+    },
+    {
+      "id": "BIZ-02",
+      "title": "Analysis listing an output layer that does not exist",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/layer_ids",
+          "value": [
+            "sim-layer-before",
+            "sim-layer-after",
+            "sim-layer-missing"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-01"
+    },
+    {
+      "id": "BIZ-03",
+      "title": "Analysis referencing a study area that does not exist",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/area_id",
+          "value": "aoi-does-not-exist"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-01"
+    },
+    {
+      "id": "BIZ-04",
+      "title": "Layer pointing at a provenance record its analysis does not have",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/provenance_id",
+          "value": "sim-provenance-999"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-01"
+    },
+    {
+      "id": "BIZ-05",
+      "title": "Simulated analysis referencing a real satellite scene",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/scene_ids",
+          "value": [
+            "scene-d084-20261014",
+            "sim-scene-later"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-02"
+    },
+    {
+      "id": "BIZ-06",
+      "title": "Scene track disagrees with its own granule identifier",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/track",
+          "value": 41
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-03"
+    },
+    {
+      "id": "BIZ-07",
+      "title": "Panama bbox written as [lat, lon, lat, lon]",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/bbox_lonlat",
+          "value": [
+            8.8,
+            -80.5,
+            9.8,
+            -79.3
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-04"
+    },
+    {
+      "id": "BIZ-08",
+      "title": "Study-area bbox with west > east",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/bbox_lonlat",
+          "value": [
+            -79.3,
+            8.8,
+            -80.5,
+            9.8
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-04"
+    },
+    {
+      "id": "BIZ-09",
+      "title": "Layer extent lies outside its study area",
+      "base": "layer-sim-change.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/raster/bounds_lonlat",
+          "value": [
+            -0.5,
+            -0.5,
+            0.5,
+            0.5
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-04"
+    },
+    {
+      "id": "BIZ-10",
+      "title": "Earlier and later scenes swapped (Delta sign would invert)",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/temporal_relationship/earlier_scene_id",
+          "value": "sim-scene-later"
+        },
+        {
+          "op": "replace",
+          "path": "/temporal_relationship/later_scene_id",
+          "value": "sim-scene-earlier"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-05"
+    },
+    {
+      "id": "BIZ-11",
+      "title": "Temporal independence PASS for two scenes of one pass",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/compatibility/checks/0/result",
+          "value": "PASS"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-05"
+    },
+    {
+      "id": "BIZ-12",
+      "title": "SAME_FRAME PASS although the frames differ",
+      "base": "analysis-d084-d085-NO-GO.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/compatibility/checks/3/result",
+          "value": "PASS"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-06"
+    },
+    {
+      "id": "BIZ-13",
+      "title": "Approved GO whose human quality review never passed",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/approval",
+          "value": {
+            "status": "APPROVED",
+            "reviewer": "SIMULATED-REVIEWER",
+            "reviewed_on": "2000-02-01",
+            "notes": null
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/provenance/status",
+          "value": "VERIFIED"
+        },
+        {
+          "op": "replace",
+          "path": "/provenance/review",
+          "value": {
+            "status": "APPROVED",
+            "reviewer": "SIMULATED-REVIEWER",
+            "reviewed_on": "2000-02-01",
+            "notes": null
+          }
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-06"
+    },
+    {
+      "id": "BIZ-14",
+      "title": "Processed channel not verified in the scene HDF5",
+      "base": "scene-sim-earlier.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/frequencies/0/covariance_terms_verified",
+          "value": [
+            "HVHV"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-07"
+    },
+    {
+      "id": "BIZ-15",
+      "title": "Valid + invalid pixels do not equal total",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/statistics/invalid_pixel_count",
+          "value": 100000
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-08"
+    },
+    {
+      "id": "BIZ-16",
+      "title": "Changed percentage inconsistent with the counts",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/statistics/changed_pixel_pct",
+          "value": 25.0
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-08"
+    },
+    {
+      "id": "BIZ-17",
+      "title": "Gamma0 / sigma0 conventions mixed between analysis and layers",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/measurement_convention",
+          "value": "SIGMA0"
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-09"
+    },
+    {
+      "id": "BIZ-18",
+      "title": "Local Windows path hidden in a notes field",
+      "base": "scene-d084.catalog.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/notes",
+          "value": [
+            "Saved at C:\\Users\\example\\Downloads\\scene.json"
+          ]
+        }
+      ],
+      "expect": "invalid",
+      "stage": "business",
+      "error_contains": "BR-11"
+    },
+    {
+      "id": "POS-01",
+      "title": "Fully approved simulated GO analysis (all gates satisfied)",
+      "base": "analysis-sim-go-completed.simulated.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/compatibility/checks/11/result",
+          "value": "PASS"
+        },
+        {
+          "op": "replace",
+          "path": "/approval",
+          "value": {
+            "status": "APPROVED",
+            "reviewer": "SIMULATED-REVIEWER",
+            "reviewed_on": "2000-02-01",
+            "notes": null
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/provenance/status",
+          "value": "VERIFIED"
+        },
+        {
+          "op": "replace",
+          "path": "/provenance/review",
+          "value": {
+            "status": "APPROVED",
+            "reviewer": "SIMULATED-REVIEWER",
+            "reviewed_on": "2000-02-01",
+            "notes": null
+          }
+        }
+      ],
+      "expect": "valid",
+      "stage": null,
+      "error_contains": null
+    },
+    {
+      "id": "POS-02",
+      "title": "Candidate study area promoted to APPROVED (evidence refs present)",
+      "base": "study-area-candidate.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/selection_status",
+          "value": "APPROVED"
+        }
+      ],
+      "expect": "valid",
+      "stage": null,
+      "error_contains": null
+    }
+  ]
+}

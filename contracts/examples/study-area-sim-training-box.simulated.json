@@ -1,0 +1,21 @@
+{
+  "id": "aoi-sim-training-box",
+  "data_category": "SIMULATED_DATA",
+  "name": "Synthetic training box (not a real place)",
+  "country": "XX",
+  "region": "Synthetic coordinates near 0 N, 0 E",
+  "bbox_lonlat": [
+    -0.1,
+    -0.1,
+    0.1,
+    0.1
+  ],
+  "crs": "EPSG:4326",
+  "geometry": null,
+  "selection_status": "CANDIDATE",
+  "scientific_purpose": "SIMULATED_DATA: structural testing and UI training only. Not a scientific case.",
+  "evidence_refs": [],
+  "notes": [
+    "Deliberately far from Panama so simulated overlays can never be mistaken for the study region."
+  ]
+}

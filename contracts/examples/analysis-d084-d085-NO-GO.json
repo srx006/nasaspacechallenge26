@@ -1,58 +1,195 @@
 {
   "id": "analysis-d084-d085-rejected",
-  "area_id": "aoi-parita-candidate",
+  "data_category": "VERIFIED_METADATA",
+  "area_id": "aoi-gulf-of-parita-candidate",
   "scene_ids": [
     "scene-d084-20261014",
     "scene-d085-20261014"
   ],
-  "status": "pair_rejected",
-  "pair_assessment": {
-    "decision": "NO_GO",
-    "reason": "Adjacent frames on same October 14 acquisition pass; not two independent temporal observations.",
-    "temporal_distinct": false,
-    "spatial_overlap_verified": null,
-    "geometry_compatible": null
+  "temporal_relationship": {
+    "classification": "SAME_ACQUISITION",
+    "earlier_scene_id": null,
+    "later_scene_id": null,
+    "interval_seconds": 32
   },
-  "channel": "unselected",
-  "method": "unselected",
-  "layers": [],
+  "compatibility": {
+    "decision": "NO_GO",
+    "evidence_level": "CATALOG_METADATA",
+    "summary": "NO_GO: D084 and D085 are adjacent frames from one acquisition pass on 2026-10-14, not a temporal before/after pair.",
+    "checks": [
+      {
+        "check_id": "TEMPORAL_INDEPENDENCE",
+        "result": "FAIL",
+        "message": "Start times differ by 32 s and both scenes come from orbit 6367 (cycle 033, track 040): one pass, not two observations."
+      },
+      {
+        "check_id": "SAME_TRACK",
+        "result": "PASS",
+        "message": "Both scenes are relative track 040."
+      },
+      {
+        "check_id": "SAME_DIRECTION",
+        "result": "PASS",
+        "message": "Both scenes are DESCENDING."
+      },
+      {
+        "check_id": "SAME_FRAME",
+        "result": "FAIL",
+        "message": "Frames 084 and 085 are adjacent; D085 is a partial-coverage frame."
+      },
+      {
+        "check_id": "SAME_RADAR_MODE",
+        "result": "PASS",
+        "message": "Both scenes are mode 4005 with nominal HH/HV (catalog)."
+      },
+      {
+        "check_id": "COMPATIBLE_MATURITY_AND_VERSION",
+        "result": "PASS",
+        "message": "Both are NISAR_L2_GCOV_PROVISIONAL_V1, product version 1.0.11, CRID P05023."
+      },
+      {
+        "check_id": "CATALOG_FOOTPRINT_OVERLAP",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      },
+      {
+        "check_id": "CHANNEL_VERIFIED_IN_BOTH",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      },
+      {
+        "check_id": "SAME_MEASUREMENT_CONVENTION",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      },
+      {
+        "check_id": "VALID_PIXEL_OVERLAP",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      },
+      {
+        "check_id": "GRID_ALIGNMENT",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      },
+      {
+        "check_id": "QUALITY_REVIEW",
+        "result": "NOT_EVALUATED",
+        "message": "Not evaluated: the pair was rejected at the metadata stage."
+      }
+    ],
+    "assessed_by": "MH-04 research (Maryfer Higuera), accepted as DEC-005",
+    "assessed_on": null
+  },
+  "selected_channel": null,
+  "measurement_convention": null,
+  "processing_method": null,
+  "parameters": {
+    "change_threshold_db": null,
+    "threshold_rule": null,
+    "use_product_mask": null,
+    "subset_bbox_lonlat": null,
+    "speckle_filter": null
+  },
+  "lifecycle_status": "NOT_STARTED",
+  "layer_ids": [],
   "statistics": {
+    "id": "stats-d084-d085-unavailable",
+    "data_category": "UNAVAILABLE",
+    "total_pixels_inspected": null,
     "valid_pixel_count": null,
+    "invalid_pixel_count": null,
     "changed_pixel_count": null,
     "changed_pixel_pct": null,
     "mean_delta_db": null,
+    "change_threshold": null,
     "changed_area_km2": null,
-    "pixel_area_method": "not_calculated"
+    "area_method": "NOT_CALCULATED",
+    "area_crs": null,
+    "qc_notes": [
+      "No change calculation: the pair was rejected as NO_GO."
+    ]
   },
   "provenance": {
-    "source_granule_ids": [
-      "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
-      "NISAR_L2_PR_GCOV_033_040_D_085_4005_DHDH_A_20261014T234516_20261014T234533_P05023_N_P_J_001"
-    ],
-    "source_dataset_paths": [],
-    "processing_status": "not_started",
-    "processing_software": {},
-    "processing_parameters": {},
-    "quality_checks": [
+    "id": "prov-d084-d085-nogo",
+    "status": "NOT_STARTED",
+    "sources": [
       {
-        "check": "different acquisition dates",
-        "status": "fail",
-        "evidence_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json"
+        "scene_id": "scene-d084-20261014",
+        "granule_id": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
+        "cmr_concept_id": "G4371433684-ASF",
+        "catalog_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371433684-ASF.umm_json",
+        "collection": "NISAR_L2_GCOV_PROVISIONAL_V1",
+        "product_maturity": "PROVISIONAL",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [],
+        "catalog_checksum": {
+          "algorithm": "MD5",
+          "value": "1170fd62056a673656c3824f66dbb671"
+        },
+        "local_sha256": null
+      },
+      {
+        "scene_id": "scene-d085-20261014",
+        "granule_id": "NISAR_L2_PR_GCOV_033_040_D_085_4005_DHDH_A_20261014T234516_20261014T234533_P05023_N_P_J_001",
+        "cmr_concept_id": "G4371282627-ASF",
+        "catalog_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json",
+        "collection": "NISAR_L2_GCOV_PROVISIONAL_V1",
+        "product_maturity": "PROVISIONAL",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [],
+        "catalog_checksum": {
+          "algorithm": "MD5",
+          "value": "f8d31f4b240c78b19e2226a8ed078ed2"
+        },
+        "local_sha256": null
       }
     ],
-    "processed_at_utc": null,
-    "output_sha256": null,
+    "processing": null,
+    "outputs": [],
+    "quality_checks": [
+      {
+        "check_id": "TEMPORAL_INDEPENDENCE",
+        "status": "FAIL",
+        "description": "Start times 32 s apart in one pass (orbit 6367).",
+        "evidence_ref": "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json"
+      }
+    ],
+    "review": {
+      "status": "NOT_REVIEWED",
+      "reviewer": null,
+      "reviewed_on": null,
+      "notes": null
+    },
     "notes": [
       "No raster calculation conducted."
     ]
   },
+  "scientific_claim_level": "CATALOG_ONLY",
   "limitations": [
-    "No temporal pair: analysis cannot produce observed surface change.",
-    "No extracted NISAR raster or evaluated pixel-quality masks."
+    "No temporal pair: this analysis cannot produce an observed surface change.",
+    "No HDF5 dataset inspected, no raster extracted, no pixel-quality mask evaluated.",
+    "A compatible different-date pair has not been approved (see BL-01 and MH-05 / MH-06)."
   ],
-  "scientific_claim_level": "catalog_only",
+  "approval": {
+    "status": "APPROVED",
+    "reviewer": "José Peñalba",
+    "reviewed_on": "2026-10-25",
+    "notes": "NO_GO accepted as DEC-005 (docs/Stage-0-Decisions.md, from MH-04). A research outcome, not a change result."
+  },
   "reference_urls": [
     "https://cmr.earthdata.nasa.gov/search/concepts/G4371433684-ASF.umm_json",
     "https://cmr.earthdata.nasa.gov/search/concepts/G4371282627-ASF.umm_json"
+  ],
+  "notes": [
+    "Frame 084 and 085 catalog footprints overlap in a narrow strip, but overlap is not temporal independence."
   ]
 }

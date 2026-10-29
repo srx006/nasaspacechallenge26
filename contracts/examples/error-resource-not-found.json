@@ -1,0 +1,11 @@
+{
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "No scene exists with the requested identifier.",
+    "http_status": 404,
+    "detail": {
+      "resource_type": "SCENE",
+      "resource_id": "scene-does-not-exist"
+    }
+  }
+}

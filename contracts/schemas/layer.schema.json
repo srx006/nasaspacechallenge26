@@ -1,115 +1,741 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ISTMOSAR Map Layer v1",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/layer.schema.json",
+  "title": "ISTMOSAR Geographic Layer v1",
+  "description": "A map-displayable raster product. The scientific artifact (raster) and the frontend representation (delivery) are separate.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
+    "data_category",
+    "parent",
     "role",
-    "status",
+    "purpose",
     "source_scene_ids",
-    "url",
-    "format",
-    "crs",
-    "units",
+    "availability",
+    "quality_status",
     "measurement",
-    "nodata_policy"
+    "raster",
+    "delivery",
+    "legend",
+    "provenance_id",
+    "limitations"
   ],
   "properties": {
     "id": {
-      "type": "string"
+      "$ref": "common.schema.json#/$defs/Id"
+    },
+    "data_category": {
+      "enum": [
+        "UNAVAILABLE",
+        "SIMULATED_DATA",
+        "PROCESSED_NISAR_DATA"
+      ]
+    },
+    "parent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "SCENE",
+            "ANALYSIS"
+          ]
+        },
+        "id": {
+          "$ref": "common.schema.json#/$defs/Id"
+        }
+      }
     },
     "role": {
       "enum": [
-        "before",
-        "after",
-        "change",
-        "change_mask",
-        "valid_mask",
-        "context"
+        "SCENE_BACKSCATTER",
+        "BEFORE",
+        "AFTER",
+        "CHANGE",
+        "CHANGE_MASK",
+        "VALID_MASK",
+        "CONTEXT"
       ]
     },
-    "status": {
-      "enum": [
-        "planned",
-        "generated_unverified",
-        "qa_passed",
-        "rejected"
-      ]
+    "purpose": {
+      "$ref": "common.schema.json#/$defs/NonEmptyText"
     },
     "source_scene_ids": {
       "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
       "items": {
-        "type": "string"
+        "$ref": "common.schema.json#/$defs/Id"
       }
     },
-    "url": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "format": {
+    "availability": {
       "enum": [
-        "geotiff",
-        "cog",
-        "png_overlay",
-        "tile_xyz",
-        "geojson",
-        "unknown"
-      ]
+        "NOT_GENERATED",
+        "AVAILABLE",
+        "WITHDRAWN"
+      ],
+      "description": "Reflects whether the artifact actually exists; independent of scientific quality."
     },
-    "crs": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "units": {
+    "quality_status": {
       "enum": [
-        "dB",
-        "linear_power",
-        "boolean",
-        "none",
-        "unknown"
+        "NOT_ASSESSED",
+        "IN_REVIEW",
+        "PASSED",
+        "FAILED"
       ]
     },
     "measurement": {
-      "enum": [
-        "gamma0",
-        "sigma0",
-        "delta_gamma0_db",
-        "change_threshold_mask",
-        "validity",
-        "context",
-        "unknown"
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "convention",
+        "unit",
+        "covariance_term",
+        "frequency_band"
+      ],
+      "properties": {
+        "convention": {
+          "enum": [
+            "GAMMA0",
+            "SIGMA0",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "unit": {
+          "enum": [
+            "dB",
+            "linear_power",
+            "dimensionless"
+          ]
+        },
+        "covariance_term": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/DiagonalCovarianceTerm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "frequency_band": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/FrequencyBand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "raster": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "format",
+            "crs",
+            "bounds_lonlat",
+            "grid",
+            "nodata",
+            "artifact_id",
+            "download_href",
+            "sha256"
+          ],
+          "properties": {
+            "format": {
+              "enum": [
+                "GEOTIFF",
+                "COG"
+              ],
+              "description": "Scientific artifact format. NOT a browser display format."
+            },
+            "crs": {
+              "$ref": "common.schema.json#/$defs/EpsgCode"
+            },
+            "bounds_lonlat": {
+              "$ref": "common.schema.json#/$defs/BBoxLonLat"
+            },
+            "grid": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "width_px",
+                "height_px",
+                "pixel_size_x",
+                "pixel_size_y",
+                "pixel_size_unit"
+              ],
+              "properties": {
+                "width_px": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height_px": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "pixel_size_x": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "pixel_size_y": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "pixel_size_unit": {
+                  "enum": [
+                    "m",
+                    "deg"
+                  ]
+                }
+              }
+            },
+            "nodata": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "representation",
+                "value",
+                "policy"
+              ],
+              "properties": {
+                "representation": {
+                  "enum": [
+                    "NAN",
+                    "VALUE",
+                    "MASK_BAND"
+                  ]
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "policy": {
+                  "$ref": "common.schema.json#/$defs/NonEmptyText"
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "representation": {
+                        "const": "VALUE"
+                      }
+                    },
+                    "required": [
+                      "representation"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "representation": {
+                        "enum": [
+                          "NAN",
+                          "MASK_BAND"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "representation"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "value": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "artifact_id": {
+              "$ref": "common.schema.json#/$defs/Id"
+            },
+            "download_href": {
+              "anyOf": [
+                {
+                  "$ref": "common.schema.json#/$defs/HttpsUrl"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "$ref": "common.schema.json#/$defs/Sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
       ]
     },
-    "nodata_policy": {
-      "type": "string"
-    },
-    "bounds_lonlat": {
-      "type": [
-        "array",
-        "null"
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "display_crs",
+        "image_href",
+        "image_format",
+        "image_bounds_lonlat",
+        "tile_url_template",
+        "tile_size",
+        "min_zoom",
+        "max_zoom"
       ],
-      "items": {
-        "type": "number"
+      "properties": {
+        "method": {
+          "enum": [
+            "NONE",
+            "IMAGE_OVERLAY",
+            "XYZ_TILES"
+          ],
+          "description": "Frontend-compatible representation. GeoTIFF/COG is never a delivery method."
+        },
+        "display_crs": {
+          "const": "EPSG:3857",
+          "description": "Leaflet default Web Mercator. Overlays and tiles must already be in this CRS."
+        },
+        "image_href": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/HttpsUrl"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "image_format": {
+          "enum": [
+            "PNG",
+            "WEBP",
+            null
+          ]
+        },
+        "image_bounds_lonlat": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/BBoxLonLat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tile_url_template": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://(?=.*\\{z\\})(?=.*\\{x\\})(?=.*\\{y\\})[^\\s]+$",
+          "description": "XYZ template containing {z}, {x} and {y}."
+        },
+        "tile_size": {
+          "enum": [
+            256,
+            512,
+            null
+          ]
+        },
+        "min_zoom": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 22
+        },
+        "max_zoom": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 22
+        }
       },
-      "minItems": 4,
-      "maxItems": 4
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "NONE"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "properties": {
+              "image_href": {
+                "type": "null"
+              },
+              "image_format": {
+                "type": "null"
+              },
+              "image_bounds_lonlat": {
+                "type": "null"
+              },
+              "tile_url_template": {
+                "type": "null"
+              },
+              "tile_size": {
+                "type": "null"
+              },
+              "min_zoom": {
+                "type": "null"
+              },
+              "max_zoom": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "IMAGE_OVERLAY"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "properties": {
+              "image_href": {
+                "type": "string"
+              },
+              "image_format": {
+                "type": "string"
+              },
+              "image_bounds_lonlat": {
+                "type": "array"
+              },
+              "tile_url_template": {
+                "type": "null"
+              },
+              "tile_size": {
+                "type": "null"
+              },
+              "min_zoom": {
+                "type": "null"
+              },
+              "max_zoom": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "XYZ_TILES"
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "properties": {
+              "tile_url_template": {
+                "type": "string"
+              },
+              "tile_size": {
+                "type": "integer"
+              },
+              "min_zoom": {
+                "type": "integer"
+              },
+              "max_zoom": {
+                "type": "integer"
+              },
+              "image_href": {
+                "type": "null"
+              },
+              "image_format": {
+                "type": "null"
+              },
+              "image_bounds_lonlat": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
     },
     "legend": {
-      "type": [
-        "object",
-        "null"
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "unit_label",
+            "colormap",
+            "min",
+            "max"
+          ],
+          "properties": {
+            "title": {
+              "$ref": "common.schema.json#/$defs/NonEmptyText"
+            },
+            "unit_label": {
+              "type": "string"
+            },
+            "colormap": {
+              "type": "string"
+            },
+            "min": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
       ]
     },
-    "notes": {
+    "provenance_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/Id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limitations": {
       "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "string"
+        "$ref": "common.schema.json#/$defs/NonEmptyText"
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "enum": [
+              "BEFORE",
+              "AFTER",
+              "CHANGE",
+              "SCENE_BACKSCATTER"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "then": {
+        "properties": {
+          "measurement": {
+            "properties": {
+              "convention": {
+                "enum": [
+                  "GAMMA0",
+                  "SIGMA0"
+                ]
+              },
+              "covariance_term": {
+                "$ref": "common.schema.json#/$defs/DiagonalCovarianceTerm"
+              },
+              "frequency_band": {
+                "$ref": "common.schema.json#/$defs/FrequencyBand"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "CHANGE"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "then": {
+        "properties": {
+          "measurement": {
+            "properties": {
+              "unit": {
+                "const": "dB"
+              }
+            }
+          },
+          "source_scene_ids": {
+            "minItems": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "enum": [
+              "BEFORE",
+              "AFTER",
+              "SCENE_BACKSCATTER"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "then": {
+        "properties": {
+          "measurement": {
+            "properties": {
+              "unit": {
+                "enum": [
+                  "dB",
+                  "linear_power"
+                ]
+              }
+            }
+          },
+          "source_scene_ids": {
+            "maxItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "enum": [
+              "CHANGE_MASK",
+              "VALID_MASK"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "then": {
+        "properties": {
+          "measurement": {
+            "properties": {
+              "unit": {
+                "const": "dimensionless"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "availability": {
+            "const": "AVAILABLE"
+          }
+        },
+        "required": [
+          "availability"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data_category": {
+            "enum": [
+              "SIMULATED_DATA",
+              "PROCESSED_NISAR_DATA"
+            ]
+          },
+          "raster": {
+            "type": "object"
+          },
+          "delivery": {
+            "properties": {
+              "method": {
+                "enum": [
+                  "IMAGE_OVERLAY",
+                  "XYZ_TILES"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "data_category": {
+            "const": "UNAVAILABLE"
+          },
+          "raster": {
+            "type": "null"
+          },
+          "quality_status": {
+            "const": "NOT_ASSESSED"
+          },
+          "delivery": {
+            "properties": {
+              "method": {
+                "const": "NONE"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

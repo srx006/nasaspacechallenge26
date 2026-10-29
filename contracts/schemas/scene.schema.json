@@ -1,127 +1,216 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spacedogs.example/istmosar/contracts/v1/scene.schema.json",
   "title": "ISTMOSAR NISAR GCOV Scene v1",
+  "description": "A NISAR L2 GCOV granule. Catalog authenticity (VERIFIED_METADATA) is not valid-pixel quality (quality_review).",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "id",
+    "data_category",
+    "cmr_concept_id",
     "granule_id",
     "collection",
+    "collection_concept_id",
     "product",
+    "product_maturity",
+    "product_version",
+    "crid",
     "acquisition_start_utc",
     "acquisition_end_utc",
-    "track",
     "direction",
+    "cycle",
+    "track",
     "frame",
-    "polarizations_nominal",
+    "orbit_number",
+    "frame_coverage",
+    "radar_band",
+    "radar_mode_code",
+    "frequencies",
     "footprint",
+    "catalog_updated_utc",
     "source_url",
+    "official_qa_references",
+    "file",
     "catalog_status",
-    "raster_status"
+    "catalog_verified_on",
+    "hdf5_inspection",
+    "extraction_status",
+    "raster_layer_id",
+    "quality_review",
+    "provenance",
+    "limitations"
   ],
   "properties": {
     "id": {
-      "type": "string"
+      "$ref": "common.schema.json#/$defs/Id"
+    },
+    "data_category": {
+      "enum": [
+        "VERIFIED_METADATA",
+        "PROPOSED_STRUCTURE",
+        "SIMULATED_DATA"
+      ]
+    },
+    "cmr_concept_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/CmrGranuleConceptId"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "granule_id": {
       "type": "string"
     },
-    "cmr_concept_id": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
     "collection": {
-      "type": "string"
+      "type": "string",
+      "minLength": 3,
+      "description": "CMR short name, e.g. NISAR_L2_GCOV_PROVISIONAL_V1."
+    },
+    "collection_concept_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/CmrCollectionConceptId"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "product": {
       "const": "L2_GCOV"
     },
+    "product_maturity": {
+      "enum": [
+        "BETA",
+        "PROVISIONAL",
+        "VALIDATED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "product_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "CMR PRODUCT_VERSION attribute, null if the catalog export did not include it."
+    },
+    "crid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]\\d{5}$"
+    },
     "acquisition_start_utc": {
-      "type": "string",
-      "format": "date-time"
+      "$ref": "common.schema.json#/$defs/UtcTimestamp"
     },
     "acquisition_end_utc": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "track": {
-      "type": "integer",
-      "minimum": 0
+      "$ref": "common.schema.json#/$defs/UtcTimestamp"
     },
     "direction": {
       "enum": [
-        "ascending",
-        "descending"
+        "ASCENDING",
+        "DESCENDING"
       ]
+    },
+    "cycle": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "track": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 173,
+      "description": "Relative orbit track number."
     },
     "frame": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 1,
+      "maximum": 176
     },
-    "polarizations_nominal": {
-      "type": "array",
-      "items": {
-        "enum": [
-          "HH",
-          "HV",
-          "VV",
-          "VH"
-        ]
-      },
-      "uniqueItems": true
+    "orbit_number": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
     },
-    "polarizations_verified": {
+    "frame_coverage": {
+      "enum": [
+        "FULL",
+        "PARTIAL",
+        null
+      ]
+    },
+    "radar_band": {
+      "const": "L"
+    },
+    "radar_mode_code": {
+      "type": "string",
+      "pattern": "^\\d{4}$",
+      "description": "Bandwidth mode code from the file name (e.g. 4005 = 40 MHz primary + 5 MHz secondary band)."
+    },
+    "frequencies": {
       "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
       "items": {
-        "enum": [
-          "HH",
-          "HV",
-          "VV",
-          "VH"
-        ]
-      },
-      "uniqueItems": true
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "band",
+          "range_bandwidth_mhz",
+          "polarizations_nominal",
+          "covariance_terms_verified"
+        ],
+        "properties": {
+          "band": {
+            "$ref": "common.schema.json#/$defs/FrequencyBand"
+          },
+          "range_bandwidth_mhz": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "polarizations_nominal": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/Polarization"
+            },
+            "description": "From catalog metadata / file name. NOT proof the HDF5 datasets exist."
+          },
+          "covariance_terms_verified": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/CovarianceTerm"
+            },
+            "description": "Covariance datasets actually found when the HDF5 file was inspected. Must be empty unless hdf5_inspection.status is INSPECTED."
+          }
+        }
+      }
     },
     "footprint": {
       "anyOf": [
         {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "Polygon"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "array",
-                "minItems": 4,
-                "items": {
-                  "type": "array",
-                  "prefixItems": [
-                    {
-                      "type": "number",
-                      "minimum": -180,
-                      "maximum": 180
-                    },
-                    {
-                      "type": "number",
-                      "minimum": -90,
-                      "maximum": 90
-                    }
-                  ],
-                  "items": false
-                }
-              }
-            }
-          },
-          "additionalProperties": false
+          "$ref": "common.schema.json#/$defs/PolygonLonLat"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "catalog_updated_utc": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/UtcTimestamp"
         },
         {
           "type": "null"
@@ -129,42 +218,189 @@
       ]
     },
     "source_url": {
-      "type": "string",
-      "format": "uri"
+      "$ref": "common.schema.json#/$defs/HttpsUrl"
     },
-    "file_size_bytes": {
-      "type": [
-        "integer",
-        "null"
-      ],
-      "minimum": 0
+    "official_qa_references": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/HttpsUrl"
+      },
+      "description": "QA artifacts listed in the catalog record. Listing a URL does not mean its content has been reviewed."
     },
-    "md5": {
-      "type": [
-        "string",
-        "null"
+    "file": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "size_bytes",
+            "catalog_checksum",
+            "download_verification"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "\\.h5$"
+            },
+            "size_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "catalog_checksum": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "algorithm",
+                    "value"
+                  ],
+                  "properties": {
+                    "algorithm": {
+                      "const": "MD5"
+                    },
+                    "value": {
+                      "$ref": "common.schema.json#/$defs/Md5"
+                    }
+                  },
+                  "description": "MD5 as declared by CMR for the .h5 file. Declared, not verified locally."
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "download_verification": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "sha256",
+                "verified_at_utc"
+              ],
+              "properties": {
+                "status": {
+                  "enum": [
+                    "NOT_DOWNLOADED",
+                    "VERIFIED",
+                    "MISMATCH"
+                  ]
+                },
+                "sha256": {
+                  "anyOf": [
+                    {
+                      "$ref": "common.schema.json#/$defs/Sha256"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "verified_at_utc": {
+                  "anyOf": [
+                    {
+                      "$ref": "common.schema.json#/$defs/UtcTimestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "catalog_status": {
       "enum": [
-        "candidate",
-        "catalog_verified",
-        "rejected"
+        "CANDIDATE",
+        "CATALOG_VERIFIED",
+        "REJECTED"
       ]
     },
-    "raster_status": {
-      "enum": [
-        "not_extracted",
-        "extracted_unverified",
-        "qa_passed",
-        "rejected"
-      ]
-    },
-    "raster_layer_id": {
+    "catalog_verified_on": {
       "type": [
         "string",
         "null"
+      ],
+      "format": "date",
+      "description": "Date this record was last compared field-by-field with the official catalog record."
+    },
+    "hdf5_inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "inspected_at_utc",
+        "inspected_by"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_INSPECTED",
+            "INSPECTED"
+          ]
+        },
+        "inspected_at_utc": {
+          "anyOf": [
+            {
+              "$ref": "common.schema.json#/$defs/UtcTimestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inspected_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "extraction_status": {
+      "enum": [
+        "NOT_EXTRACTED",
+        "EXTRACTED",
+        "EXTRACTION_FAILED"
+      ],
+      "description": "Whether a display/scientific raster layer has been extracted from this scene (Level 1)."
+    },
+    "raster_layer_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/Id"
+        },
+        {
+          "type": "null"
+        }
       ]
+    },
+    "quality_review": {
+      "$ref": "common.schema.json#/$defs/ReviewRecord"
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "provenance.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/NonEmptyText"
+      }
     },
     "notes": {
       "type": "array",
@@ -172,5 +408,142 @@
         "type": "string"
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "data_category": {
+            "const": "SIMULATED_DATA"
+          }
+        },
+        "required": [
+          "data_category"
+        ]
+      },
+      "then": {
+        "properties": {
+          "granule_id": {
+            "$ref": "common.schema.json#/$defs/SimulatedGranuleId"
+          },
+          "catalog_status": {
+            "const": "CANDIDATE"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "granule_id": {
+            "$ref": "common.schema.json#/$defs/NisarGranuleId"
+          },
+          "cmr_concept_id": {
+            "$ref": "common.schema.json#/$defs/CmrGranuleConceptId"
+          },
+          "collection_concept_id": {
+            "$ref": "common.schema.json#/$defs/CmrCollectionConceptId"
+          },
+          "product_maturity": {
+            "enum": [
+              "BETA",
+              "PROVISIONAL",
+              "VALIDATED"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "data_category": {
+            "const": "VERIFIED_METADATA"
+          }
+        },
+        "required": [
+          "data_category"
+        ]
+      },
+      "then": {
+        "properties": {
+          "catalog_status": {
+            "const": "CATALOG_VERIFIED"
+          },
+          "catalog_verified_on": {
+            "type": "string"
+          },
+          "source_url": {
+            "pattern": "^https://cmr\\.earthdata\\.nasa\\.gov/search/concepts/G[0-9]+-[A-Z0-9_]+\\.umm_json$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "hdf5_inspection": {
+            "properties": {
+              "status": {
+                "const": "NOT_INSPECTED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "hdf5_inspection"
+        ]
+      },
+      "then": {
+        "properties": {
+          "frequencies": {
+            "items": {
+              "properties": {
+                "covariance_terms_verified": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "extraction_status": {
+            "const": "EXTRACTED"
+          }
+        },
+        "required": [
+          "extraction_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "raster_layer_id": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "object"
+          },
+          "hdf5_inspection": {
+            "properties": {
+              "status": {
+                "const": "INSPECTED"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "raster_layer_id": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
 }

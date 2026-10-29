@@ -1,0 +1,9 @@
+{
+  "contract_version": "1.0.0-rc.1",
+  "items": [],
+  "page": {
+    "limit": 50,
+    "offset": 0,
+    "total": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "aoi-gulf-of-parita-candidate",
+  "data_category": "PROPOSED_STRUCTURE",
+  "name": "Gulf of Parita research bounding box",
+  "country": "PA",
+  "region": "Central Pacific coast of Panama (Gulf of Parita)",
+  "bbox_lonlat": [
+    -80.7,
+    7.7,
+    -79.8,
+    8.7
+  ],
+  "crs": "EPSG:4326",
+  "geometry": null,
+  "selection_status": "CANDIDATE",
+  "scientific_purpose": "Candidate coastal surface-water case study area investigated in MH-01. Approval depends on a compatible different-date pair (MH-05 / MH-06).",
+  "evidence_refs": [
+    {
+      "kind": "REPOSITORY_PATH",
+      "ref": "MH-01-Verification/Gulf-of-Parita.json",
+      "note": "Its bounding_box query parameter defines this box."
+    },
+    {
+      "kind": "EVIDENCE_INDEX_ID",
+      "ref": "EV-CMR-002",
+      "note": "D085, which motivated further coverage investigation here (docs/Stage-0-Decisions.md)."
+    }
+  ],
+  "notes": []
+}

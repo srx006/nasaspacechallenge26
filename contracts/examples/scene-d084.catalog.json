@@ -1,19 +1,44 @@
 {
   "id": "scene-d084-20261014",
-  "granule_id": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
+  "data_category": "VERIFIED_METADATA",
   "cmr_concept_id": "G4371433684-ASF",
+  "granule_id": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001",
   "collection": "NISAR_L2_GCOV_PROVISIONAL_V1",
+  "collection_concept_id": "C2854338529-ASF",
   "product": "L2_GCOV",
-  "acquisition_start_utc": "2026-10-14T23:44:44Z",
-  "acquisition_end_utc": "2026-10-14T23:45:17.999Z",
+  "product_maturity": "PROVISIONAL",
+  "product_version": "1.0.11",
+  "crid": "P05023",
+  "acquisition_start_utc": "2026-10-14T23:44:44.000000Z",
+  "acquisition_end_utc": "2026-10-14T23:45:17.999342Z",
+  "direction": "DESCENDING",
+  "cycle": 33,
   "track": 40,
-  "direction": "descending",
   "frame": 84,
-  "polarizations_nominal": [
-    "HH",
-    "HV"
+  "orbit_number": 6367,
+  "frame_coverage": "FULL",
+  "radar_band": "L",
+  "radar_mode_code": "4005",
+  "frequencies": [
+    {
+      "band": "A",
+      "range_bandwidth_mhz": 40,
+      "polarizations_nominal": [
+        "HH",
+        "HV"
+      ],
+      "covariance_terms_verified": []
+    },
+    {
+      "band": "B",
+      "range_bandwidth_mhz": 5,
+      "polarizations_nominal": [
+        "HH",
+        "HV"
+      ],
+      "covariance_terms_verified": []
+    }
   ],
-  "polarizations_verified": [],
   "footprint": {
     "type": "Polygon",
     "coordinates": [
@@ -41,14 +66,49 @@
       ]
     ]
   },
+  "catalog_updated_utc": "2026-10-16T23:34:48.716502Z",
   "source_url": "https://cmr.earthdata.nasa.gov/search/concepts/G4371433684-ASF.umm_json",
-  "file_size_bytes": 4991221760,
-  "md5": "c2099bd62c6be734c93f20e2c61a27f0",
-  "catalog_status": "catalog_verified",
-  "raster_status": "not_extracted",
+  "official_qa_references": [
+    "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001/NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001_QA_REPORT.pdf",
+    "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001/NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001_QA_SUMMARY.csv"
+  ],
+  "file": {
+    "name": "NISAR_L2_PR_GCOV_033_040_D_084_4005_DHDH_A_20261014T234444_20261014T234517_P05023_N_F_J_001.h5",
+    "size_bytes": 4991221760,
+    "catalog_checksum": {
+      "algorithm": "MD5",
+      "value": "1170fd62056a673656c3824f66dbb671"
+    },
+    "download_verification": {
+      "status": "NOT_DOWNLOADED",
+      "sha256": null,
+      "verified_at_utc": null
+    }
+  },
+  "catalog_status": "CATALOG_VERIFIED",
+  "catalog_verified_on": "2026-10-28",
+  "hdf5_inspection": {
+    "status": "NOT_INSPECTED",
+    "inspected_at_utc": null,
+    "inspected_by": null
+  },
+  "extraction_status": "NOT_EXTRACTED",
   "raster_layer_id": null,
+  "quality_review": {
+    "status": "NOT_REVIEWED",
+    "reviewer": null,
+    "reviewed_on": null,
+    "notes": null
+  },
+  "provenance": null,
+  "limitations": [
+    "Catalog metadata only: no HDF5 dataset has been opened, so the HH/HV channels are nominal, not verified.",
+    "The footprint is the CMR catalog polygon, not QA-passed valid pixels.",
+    "PROVISIONAL product maturity: consult the NISAR provisional known-issues page before scientific use.",
+    "The MD5 is the value declared by CMR; no local download has been verified against it."
+  ],
   "notes": [
-    "Nominal HH/HV derived from granule naming; actual HDF5 datasets not yet inspected.",
-    "Footprint represents catalog coverage, not QA-passed valid pixels."
+    "Footprint converted from the CMR latitude/longitude order to GeoJSON longitude/latitude order.",
+    "Timestamps are the official CMR values, kept at microsecond precision."
   ]
 }

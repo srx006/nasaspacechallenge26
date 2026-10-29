@@ -1,0 +1,68 @@
+{
+  "id": "sim-layer-before",
+  "data_category": "SIMULATED_DATA",
+  "parent": {
+    "type": "ANALYSIS",
+    "id": "sim-analysis-go-completed"
+  },
+  "role": "BEFORE",
+  "purpose": "HHHH backscatter, earlier simulated scene",
+  "source_scene_ids": [
+    "sim-scene-earlier"
+  ],
+  "availability": "AVAILABLE",
+  "quality_status": "IN_REVIEW",
+  "measurement": {
+    "convention": "GAMMA0",
+    "unit": "dB",
+    "covariance_term": "HHHH",
+    "frequency_band": "A"
+  },
+  "raster": {
+    "format": "COG",
+    "crs": "EPSG:6933",
+    "bounds_lonlat": [
+      -0.09,
+      -0.09,
+      0.09,
+      0.09
+    ],
+    "grid": {
+      "width_px": 1000,
+      "height_px": 1000,
+      "pixel_size_x": 20.0,
+      "pixel_size_y": 20.0,
+      "pixel_size_unit": "m"
+    },
+    "nodata": {
+      "representation": "NAN",
+      "value": null,
+      "policy": "NaN where power is non-finite, non-positive or mask-invalid."
+    },
+    "artifact_id": "sim-artifact-before",
+    "download_href": "https://example.invalid/sim/artifacts/sim-artifact-before.tif",
+    "sha256": null
+  },
+  "delivery": {
+    "method": "XYZ_TILES",
+    "display_crs": "EPSG:3857",
+    "image_href": null,
+    "image_format": null,
+    "image_bounds_lonlat": null,
+    "tile_url_template": "https://example.invalid/sim/tiles/before/{z}/{x}/{y}.png",
+    "tile_size": 256,
+    "min_zoom": 8,
+    "max_zoom": 14
+  },
+  "legend": {
+    "title": "HHHH backscatter, earlier simulated scene",
+    "unit_label": "dB",
+    "colormap": "gray",
+    "min": -25,
+    "max": 0
+  },
+  "provenance_id": "sim-provenance-001",
+  "limitations": [
+    "SIMULATED_DATA: artificial raster for structural testing only."
+  ]
+}

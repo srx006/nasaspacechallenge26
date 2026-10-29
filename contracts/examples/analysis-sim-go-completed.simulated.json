@@ -1,0 +1,254 @@
+{
+  "id": "sim-analysis-go-completed",
+  "data_category": "SIMULATED_DATA",
+  "area_id": "aoi-sim-training-box",
+  "scene_ids": [
+    "sim-scene-earlier",
+    "sim-scene-later"
+  ],
+  "temporal_relationship": {
+    "classification": "DISTINCT_ACQUISITIONS",
+    "earlier_scene_id": "sim-scene-earlier",
+    "later_scene_id": "sim-scene-later",
+    "interval_seconds": 1036800
+  },
+  "compatibility": {
+    "decision": "GO",
+    "evidence_level": "PIXEL_CHECKS_PASSED",
+    "summary": "SIMULATED: all automated checks pass. Human quality review has not happened, so this is not approved.",
+    "checks": [
+      {
+        "check_id": "TEMPORAL_INDEPENDENCE",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "SAME_TRACK",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "SAME_DIRECTION",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "SAME_FRAME",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "SAME_RADAR_MODE",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "COMPATIBLE_MATURITY_AND_VERSION",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "CATALOG_FOOTPRINT_OVERLAP",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "CHANNEL_VERIFIED_IN_BOTH",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "SAME_MEASUREMENT_CONVENTION",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "VALID_PIXEL_OVERLAP",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "GRID_ALIGNMENT",
+        "result": "PASS",
+        "message": "SIMULATED: check passed."
+      },
+      {
+        "check_id": "QUALITY_REVIEW",
+        "result": "NOT_EVALUATED",
+        "message": "SIMULATED: human quality review not yet performed."
+      }
+    ],
+    "assessed_by": "SIMULATED-ASSESSOR",
+    "assessed_on": "2000-01-14"
+  },
+  "selected_channel": {
+    "covariance_term": "HHHH",
+    "frequency_band": "A"
+  },
+  "measurement_convention": "GAMMA0",
+  "processing_method": {
+    "id": "PAIRWISE_DELTA_DB",
+    "difference_convention": "LATER_MINUS_EARLIER",
+    "power_to_db": "10*log10(P)",
+    "valid_input_rule": "FINITE_POSITIVE_LINEAR_POWER"
+  },
+  "parameters": {
+    "change_threshold_db": 3.0,
+    "threshold_rule": "ABS_DELTA_GTE",
+    "use_product_mask": true,
+    "subset_bbox_lonlat": null,
+    "speckle_filter": null
+  },
+  "lifecycle_status": "COMPLETED",
+  "layer_ids": [
+    "sim-layer-before",
+    "sim-layer-after",
+    "sim-layer-change"
+  ],
+  "statistics": {
+    "id": "sim-statistics-001",
+    "data_category": "SIMULATED_DATA",
+    "total_pixels_inspected": 1000000,
+    "valid_pixel_count": 800000,
+    "invalid_pixel_count": 200000,
+    "changed_pixel_count": 80000,
+    "changed_pixel_pct": 10.0,
+    "mean_delta_db": -0.5,
+    "change_threshold": {
+      "value": 3.0,
+      "unit": "dB",
+      "rule": "ABS_DELTA_GTE"
+    },
+    "changed_area_km2": 32.0,
+    "area_method": "EQUAL_AREA_GRID",
+    "area_crs": "EPSG:6933",
+    "qc_notes": [
+      "SIMULATED_DATA: artificial round numbers for structural testing only."
+    ]
+  },
+  "provenance": {
+    "id": "sim-provenance-001",
+    "status": "EXECUTED_UNVERIFIED",
+    "sources": [
+      {
+        "scene_id": "sim-scene-earlier",
+        "granule_id": "SIMULATED-SCENE-EARLIER-001",
+        "cmr_concept_id": null,
+        "catalog_url": "https://example.invalid/sim/catalog/sim-scene-earlier",
+        "collection": "SIMULATED_COLLECTION",
+        "product_maturity": "NOT_APPLICABLE",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [
+          "/science/LSAR/GCOV/grids/frequencyA/HHHH"
+        ],
+        "catalog_checksum": null,
+        "local_sha256": null
+      },
+      {
+        "scene_id": "sim-scene-later",
+        "granule_id": "SIMULATED-SCENE-LATER-001",
+        "cmr_concept_id": null,
+        "catalog_url": "https://example.invalid/sim/catalog/sim-scene-later",
+        "collection": "SIMULATED_COLLECTION",
+        "product_maturity": "NOT_APPLICABLE",
+        "retrieval": {
+          "status": "NOT_RETRIEVED",
+          "method": null,
+          "retrieved_at_utc": null
+        },
+        "dataset_paths_inspected": [
+          "/science/LSAR/GCOV/grids/frequencyA/HHHH"
+        ],
+        "catalog_checksum": null,
+        "local_sha256": null
+      }
+    ],
+    "processing": {
+      "selected_channel": {
+        "covariance_term": "HHHH",
+        "frequency_band": "A"
+      },
+      "measurement_convention": "GAMMA0",
+      "source_crs": "EPSG:32617",
+      "destination_crs": "EPSG:6933",
+      "resampling_method": "BILINEAR",
+      "grid_alignment": {
+        "reference_scene_id": "sim-scene-earlier",
+        "target_pixel_size_m": 20.0,
+        "alignment_verified": true
+      },
+      "masking_rules": [
+        "Exclude non-finite or non-positive power.",
+        "Exclude pixels flagged invalid by the product mask dataset."
+      ],
+      "parameters": {
+        "change_threshold_db": 3.0,
+        "threshold_rule": "ABS_DELTA_GTE",
+        "use_product_mask": true,
+        "subset_bbox_lonlat": null,
+        "speckle_filter": null
+      },
+      "software": {
+        "simulation-script": "0.0.0"
+      },
+      "started_at_utc": "2000-01-14T00:00:00Z",
+      "completed_at_utc": "2000-01-14T00:10:00Z"
+    },
+    "outputs": [
+      {
+        "artifact_id": "sim-artifact-before",
+        "kind": "BEFORE_RASTER",
+        "sha256": null
+      },
+      {
+        "artifact_id": "sim-artifact-after",
+        "kind": "AFTER_RASTER",
+        "sha256": null
+      },
+      {
+        "artifact_id": "sim-artifact-change",
+        "kind": "DELTA_DB_RASTER",
+        "sha256": null
+      }
+    ],
+    "quality_checks": [
+      {
+        "check_id": "VALID_MASK_BUILT",
+        "status": "PASS",
+        "description": "SIMULATED: valid-pixel mask constructed.",
+        "evidence_ref": null
+      },
+      {
+        "check_id": "MANUAL_SCIENTIFIC_REVIEW",
+        "status": "PENDING",
+        "description": "SIMULATED: awaiting reviewer.",
+        "evidence_ref": null
+      }
+    ],
+    "review": {
+      "status": "IN_REVIEW",
+      "reviewer": "SIMULATED-REVIEWER",
+      "reviewed_on": null,
+      "notes": null
+    },
+    "notes": []
+  },
+  "scientific_claim_level": "RADAR_BACKSCATTER_CHANGE",
+  "limitations": [
+    "SIMULATED_DATA: no satellite observation was used.",
+    "COMPLETED processing is not scientific approval; approval.status is IN_REVIEW.",
+    "A radar backscatter change is not evidence of flooding, water depth, deforestation or deformation."
+  ],
+  "approval": {
+    "status": "IN_REVIEW",
+    "reviewer": "SIMULATED-REVIEWER",
+    "reviewed_on": null,
+    "notes": null
+  },
+  "reference_urls": [],
+  "notes": []
+}
